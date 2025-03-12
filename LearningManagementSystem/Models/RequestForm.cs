@@ -5,8 +5,7 @@
         public int RequestID { get; set; }
         public int EmployeeID { get; set; }
         public int CourseID { get; set; }
-        public string RequestedFor { get; set; }
-        public string RequestEmpID { get; set; } // Could be stored as JSON or comma-separated values
+        public string RequestEmpIDs { get; set; } // Could be stored as JSON or comma-separated values with employeeid: employeeName
         public DateTime RequestDate { get; set; }
         public string Status { get; set; }
         public string Comments { get; set; }
