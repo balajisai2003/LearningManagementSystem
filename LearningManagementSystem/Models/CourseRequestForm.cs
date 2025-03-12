@@ -1,6 +1,6 @@
 ﻿namespace LearningManagementSystem.Models
 {
-    public class RequestForm
+    public class CourseRequestForm
     {
         public int RequestID { get; set; }
         public int EmployeeID { get; set; }
