@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Microsoft.Data.SqlClient;
 using Npgsql;
 
 namespace LearningManagementSystem.Helpers
@@ -9,9 +10,9 @@ namespace LearningManagementSystem.Helpers
 
         public DatabaseHelper(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("PostgresConnection");
+            _connectionString = configuration.GetConnectionString("AzureConnection");
         }
 
-        public IDbConnection GetConnection() => new NpgsqlConnection(_connectionString);
+        public IDbConnection GetConnection() => new SqlConnection(_connectionString);
     }
 }

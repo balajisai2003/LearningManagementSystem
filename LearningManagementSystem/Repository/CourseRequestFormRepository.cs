@@ -41,30 +41,38 @@ namespace LearningManagementSystem.Repository
             }
         }
 
-        public void DeleteRequestFormById(int id)
+        public int DeleteRequestFormById(int id)
         {
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = "DELETE FROM CourseRequestForm WHERE RequestID = @RequestID";
                 int response = db.Execute(sql, new { RequestID = id });
+                return response;
             }
         }
 
-        public void ApproveRequestForm(int id)
+        public CourseRequestForm ApproveRequestForm(int requestId)
         {
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = "UPDATE CourseRequestForm SET Status = 'Approved' WHERE RequestID = @RequestID";
-                int response = db.Execute(sql, new { RequestID = id });
+                int response = db.Execute(sql, new { RequestID = requestId });
+
+                CourseRequestForm updatedForm = GetRequestById(requestId);
+                return updatedForm;
+
             }
         }
 
-        public void RejectRequestForm(int id)
+        public CourseRequestForm RejectRequestForm(int requestId)
         {
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = "UPDATE CourseRequestForm SET Status = 'Rejected' WHERE RequestID = @RequestID";
-                int response = db.Execute(sql, new { RequestID = id });
+                int response = db.Execute(sql, new { RequestID = requestId });
+
+                CourseRequestForm updatedForm = GetRequestById(requestId);
+                return updatedForm;
             }
         }
 
@@ -83,7 +91,7 @@ namespace LearningManagementSystem.Repository
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = "SELECT * FROM CourseRequestForm WHERE RequestID = @RequestID";
-                CourseRequestForm response = db.QuerySingleOrDefault<CourseRequestForm>(sql, new { RequestID = id });
+                CourseRequestForm response = db.Query<CourseRequestForm>(sql, new { RequestID = id }).FirstOrDefault();
                 return response;
             }
         }
