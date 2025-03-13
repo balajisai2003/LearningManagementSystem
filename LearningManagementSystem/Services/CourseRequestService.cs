@@ -3,172 +3,134 @@ using LearningManagementSystem.Repository;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Models.DTOs;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LearningManagementSystem.Services
 {
     public class CourseRequestService : ICourseRequestService
     {
-        public CourseRequestFormRepository repository;
-        public ResponseDTO _responseDTO;
+        private readonly CourseRequestFormRepository _repository;
+        private readonly ResponseDTO _responseDTO;
 
-        public CourseRequestService(DatabaseHelper dbhelper)
+        public CourseRequestService(CourseRequestFormRepository repository)
         {
-            repository = new CourseRequestFormRepository(dbhelper);
+            _repository = repository;
             _responseDTO = new ResponseDTO();
         }
 
-        public ResponseDTO ApproveRequestForm(int requestId)
+        public async Task<ResponseDTO> ApproveRequestFormAsync(int requestId)
         {
-            CourseRequestForm requestDetails = repository.GetRequestById(requestId);
-            if (requestDetails.Status != "approved")
+            var requestDetails = await _repository.GetRequestByIdAsync(requestId);
+            if (requestDetails == null)
             {
-                CourseRequestForm response = repository.ApproveRequestForm(requestId);
-                _responseDTO.Success = true;
-                _responseDTO.Message = "Successfully approved the request.";
-                _responseDTO.Data = response;
+                _responseDTO.Success = false;
+                _responseDTO.Message = "Request not found!";
                 return _responseDTO;
             }
-            _responseDTO.Success = false;
-            _responseDTO.Message = "Request has already been approved!";
-            _responseDTO.Data = null;
-            return _responseDTO;
-        }
 
-        public ResponseDTO CreateRequestForm(CourseRequestForm form)
-        {
-            int created = repository.CreateRequestForm(form);
-            if (created > 0)
-            {
-                _responseDTO.Success = true;
-                _responseDTO.Message = "Successfully created a new request.";
-                _responseDTO.Data = created;
-            }
-            else
+            if (requestDetails.Status == "Approved")
             {
                 _responseDTO.Success = false;
-                _responseDTO.Message = "Failed to create the request.";
-                _responseDTO.Data = null;
+                _responseDTO.Message = "Request has already been approved!";
+                return _responseDTO;
             }
+
+            bool success = await _repository.ApproveRequestAsync(requestId);
+            _responseDTO.Success = success;
+            _responseDTO.Message = success ? "Successfully approved the request." : "Failed to approve the request.";
+            _responseDTO.Data = success ? requestDetails : null;
+
             return _responseDTO;
         }
 
-        public ResponseDTO DeleteRequestFormById(int requestId)
+        public async Task<ResponseDTO> CreateRequestFormAsync(CourseRequestForm form)
         {
-            CourseRequestForm requestDetails = repository.GetRequestById(requestId);
-            if (requestDetails != null)
-            {
-                int deleted = repository.DeleteRequestFormById(requestId);
-                if (deleted > 0)
-                {
-                    _responseDTO.Success = true;
-                    _responseDTO.Message = "Successfully deleted the request.";
-                    _responseDTO.Data = deleted;
-                }
-                else
-                {
-                    _responseDTO.Success = false;
-                    _responseDTO.Message = "Failed to delete the request.";
-                    _responseDTO.Data = null;
-                }
-            }
-            else
+            bool created = await _repository.CreateRequestFormAsync(form);
+
+            _responseDTO.Success = created;
+            _responseDTO.Message = created ? "Successfully created a new request." : "Failed to create the request.";
+            _responseDTO.Data = created ? form : null;
+
+            return _responseDTO;
+        }
+
+        public async Task<ResponseDTO> DeleteRequestFormAsync(int requestId)
+        {
+            var requestDetails = await _repository.GetRequestByIdAsync(requestId);
+            if (requestDetails == null)
             {
                 _responseDTO.Success = false;
                 _responseDTO.Message = "Request not found!";
-                _responseDTO.Data = null;
+                return _responseDTO;
             }
+
+            bool deleted = await _repository.DeleteRequestFormAsync(requestId);
+            _responseDTO.Success = deleted;
+            _responseDTO.Message = deleted ? "Successfully deleted the request." : "Failed to delete the request.";
+
             return _responseDTO;
         }
 
-        public ResponseDTO GetRequestById(int requestId)
+        public async Task<ResponseDTO> GetRequestByIdAsync(int requestId)
         {
-            CourseRequestForm courseRequest = repository.GetRequestById(requestId);
-            if (courseRequest != null)
-            {
-                _responseDTO.Success = true;
-                _responseDTO.Message = "Successfully fetched the request.";
-                _responseDTO.Data = courseRequest;
-            }
-            else
+            var courseRequest = await _repository.GetRequestByIdAsync(requestId);
+
+            _responseDTO.Success = courseRequest != null;
+            _responseDTO.Message = courseRequest != null ? "Successfully fetched the request." : "Request not found!";
+            _responseDTO.Data = courseRequest;
+
+            return _responseDTO;
+        }
+
+        public async Task<ResponseDTO> GetRequestsAsync()
+        {
+            var requestsList = await _repository.GetAllRequestsAsync();
+
+            _responseDTO.Success = requestsList != null && requestsList.Any();
+            _responseDTO.Message = _responseDTO.Success ? "Successfully fetched all requests." : "No requests found!";
+            _responseDTO.Data = requestsList;
+
+            return _responseDTO;
+        }
+
+        public async Task<ResponseDTO> RejectRequestFormAsync(int requestId)
+        {
+            bool success = await _repository.RejectRequestAsync(requestId);
+
+            _responseDTO.Success = success;
+            _responseDTO.Message = success ? "Successfully rejected the request." : "Failed to reject the request.";
+
+            return _responseDTO;
+        }
+
+        public async Task<ResponseDTO> UpdateRequestFormAsync(int requestId, CourseRequestForm form)
+        {
+            var requestDetails = await _repository.GetRequestByIdAsync(requestId);
+            if (requestDetails == null)
             {
                 _responseDTO.Success = false;
                 _responseDTO.Message = "Request not found!";
-                _responseDTO.Data = null;
+                return _responseDTO;
             }
+
+            bool updated = await _repository.UpdateRequestFormAsync(requestId, form);
+            _responseDTO.Success = updated;
+            _responseDTO.Message = updated ? "Successfully updated the request." : "Failed to update the request.";
+            _responseDTO.Data = updated ? form : null;
+
             return _responseDTO;
         }
 
-        public ResponseDTO GetRequests()
+        public async Task<ResponseDTO> GetRequestsByEmployeeIdAsync(int employeeId)
         {
-            List<CourseRequestForm> requestsList = repository.GetRequests();
-            if (requestsList != null && requestsList.Count > 0)
-            {
-                _responseDTO.Success = true;
-                _responseDTO.Message = "Successfully fetched all requests.";
-                _responseDTO.Data = requestsList;
-            }
-            else
-            {
-                _responseDTO.Success = false;
-                _responseDTO.Message = "No requests found!";
-                _responseDTO.Data = null;
-            }
-            return _responseDTO;
-        }
+            var requestsList = await _repository.GetRequestsByEmployeeIdAsync(employeeId);
 
-        public ResponseDTO RejectRequestForm(int requestId)
-        {
-            CourseRequestForm response = repository.RejectRequestForm(requestId);
-            if (response != null)
-            {
-                _responseDTO.Success = true;
-                _responseDTO.Message = "Successfully rejected the request.";
-                _responseDTO.Data = response;
-            }
-            else
-            {
-                _responseDTO.Success = false;
-                _responseDTO.Message = "Failed to reject the request.";
-                _responseDTO.Data = null;
-            }
-            return _responseDTO;
-        }
+            _responseDTO.Success = requestsList != null && requestsList.Any();
+            _responseDTO.Message = _responseDTO.Success ? "Successfully fetched requests." : "No requests found!";
+            _responseDTO.Data = requestsList;
 
-        public ResponseDTO UpdateRequestFormById(int requestId, CourseRequestForm form)
-        {
-            CourseRequestForm requestDetails = repository.GetRequestById(requestId);
-            if (requestDetails != null)
-            {
-                // Assuming UpdateRequestFormById updates the request status or other details
-                CourseRequestForm response = repository.UpdateRequestFormById(requestId,form);
-                _responseDTO.Success = true;
-                _responseDTO.Message = "Successfully updated the request.";
-                _responseDTO.Data = response;
-            }
-            else
-            {
-                _responseDTO.Success = false;
-                _responseDTO.Message = "Request not found!";
-                _responseDTO.Data = null;
-            }
-            return _responseDTO;
-        }
-
-        public ResponseDTO GetRequestsByEmployeeId(int employeeId)
-        {
-            List<CourseRequestForm> requestsList = repository.GetRequestsByEmployeeId(employeeId);
-            if (requestsList != null && requestsList.Count > 0)
-            {
-                _responseDTO.Success = true;
-                _responseDTO.Message = "Successfully fetched all requests.";
-                _responseDTO.Data = requestsList;
-            }
-            else
-            {
-                _responseDTO.Success = false;
-                _responseDTO.Message = "No requests found!";
-                _responseDTO.Data = null;
-            }
             return _responseDTO;
         }
     }

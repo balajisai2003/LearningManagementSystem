@@ -1,17 +1,19 @@
 ﻿using LearningManagementSystem.Models;
 using LearningManagementSystem.Models.DTOs;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LearningManagementSystem.Services.IServices
 {
     public interface ICourseRequestService
     {
-        public ResponseDTO CreateRequestForm(CourseRequestForm form);
-        public ResponseDTO UpdateRequestFormById(int id,CourseRequestForm form);
-        public ResponseDTO DeleteRequestFormById(int id);
-        public ResponseDTO ApproveRequestForm(int id); // once approved we need to add the course to all the employee in requestEmpIDs
-        public ResponseDTO RejectRequestForm(int id);
-        public ResponseDTO GetRequests();
-        public ResponseDTO GetRequestById(int id);
-        public ResponseDTO GetRequestsByEmployeeId(int employeeId);
+        Task<ResponseDTO> ApproveRequestFormAsync(int requestId);
+        Task<ResponseDTO> CreateRequestFormAsync(CourseRequestForm form);
+        Task<ResponseDTO> DeleteRequestFormAsync(int requestId);
+        Task<ResponseDTO> GetRequestByIdAsync(int requestId);
+        Task<ResponseDTO> GetRequestsAsync();
+        Task<ResponseDTO> RejectRequestFormAsync(int requestId);
+        Task<ResponseDTO> UpdateRequestFormAsync(int requestId, CourseRequestForm form);
+        Task<ResponseDTO> GetRequestsByEmployeeIdAsync(int employeeId);
     }
 }
