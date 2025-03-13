@@ -64,7 +64,7 @@ namespace LearningManagementSystem.Controllers
             return response;
         }
 
-        [HttpPost("Requests")]
+        [HttpGet("Requests")]
         public ResponseDTO GetAllCourseRequestForms()
         {
             var response = _requestService.GetRequests();
