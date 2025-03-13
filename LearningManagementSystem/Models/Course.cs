@@ -12,7 +12,6 @@
         public int? DurationInWeeks { get; set; }
         public int? DurationInHours { get; set; }
         public decimal? Price { get; set; }
-        public string NewOrReUsed { get; set; }  // "New", "ReUsed"
         public String Skills { get; set; }
         public int Points { get; }
 

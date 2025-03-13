@@ -12,7 +12,8 @@ namespace LearningManagementSystem.Models
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public string MonthCompleted { get; set; }
+        public string NewOrReUsed { get; set; }  // "New", "ReUsed"
+        public string? MonthCompleted { get; set; }
         //public string CourseContents { get; set; }  // JSON string
 
         //public List<CourseContentItem>? GetCourseContents()
