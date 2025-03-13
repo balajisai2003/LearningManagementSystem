@@ -12,5 +12,6 @@ namespace LearningManagementSystem.Services.IServices
         public ResponseDTO RejectRequestForm(int id);
         public ResponseDTO GetRequests();
         public ResponseDTO GetRequestById(int id);
+        public ResponseDTO GetRequestsByEmployeeId(int employeeId);
     }
 }

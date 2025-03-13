@@ -96,5 +96,15 @@ namespace LearningManagementSystem.Repository
             }
         }
 
+        public List<CourseRequestForm> GetRequestsByEmployeeId(int employeeId)
+        {
+            using (var db = _dbHelper.GetConnection())
+            {
+                var sql = "SELECT * FROM CourseRequestForm WHERE EmployeeID = @EmployeeID";
+                List<CourseRequestForm> response = db.Query<CourseRequestForm>(sql, new { EmployeeID = employeeId }).ToList();
+                return response;
+            }
+        }
+
     }
 }

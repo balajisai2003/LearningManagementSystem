@@ -70,5 +70,12 @@ namespace LearningManagementSystem.Controllers
             var response = _requestService.GetRequests();
             return response;
         }
+
+        [HttpGet("Requests/Employee/{employeeId}")]
+        public ResponseDTO GetRequestsByEmployeeId([FromRoute] int employeeId)
+        {
+            var response = _requestService.GetRequestsByEmployeeId(employeeId);
+            return response;
+        }
     }
 }

@@ -153,5 +153,23 @@ namespace LearningManagementSystem.Services
             }
             return _responseDTO;
         }
+
+        public ResponseDTO GetRequestsByEmployeeId(int employeeId)
+        {
+            List<CourseRequestForm> requestsList = repository.GetRequestsByEmployeeId(employeeId);
+            if (requestsList != null && requestsList.Count > 0)
+            {
+                _responseDTO.Success = true;
+                _responseDTO.Message = "Successfully fetched all requests.";
+                _responseDTO.Data = requestsList;
+            }
+            else
+            {
+                _responseDTO.Success = false;
+                _responseDTO.Message = "No requests found!";
+                _responseDTO.Data = null;
+            }
+            return _responseDTO;
+        }
     }
 }
