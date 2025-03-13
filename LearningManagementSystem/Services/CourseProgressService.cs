@@ -32,11 +32,10 @@ namespace LearningManagementSystem.Services
 
         public async Task<ResponseDTO> DeleteCourseProgressAsync(int progressId)
         {
-            return new ResponseDTO
-            {
-                Success = false,
-                Message = "Course progress deletion is not implemented."
-            };
+
+            bool isDeleted = await _repository.DeleteCourseProgressAsync(progressId);
+            return GenerateResponse(isDeleted,"Course progress Deleted Successfully", "Failed to delete course progress.");
+
         }
 
         public async Task<ResponseDTO> GetAllCourseProgressesAsync()

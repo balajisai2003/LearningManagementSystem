@@ -23,58 +23,58 @@ namespace LearningManagementSystem.Controllers
         }
 
         [HttpGet("Requests/{requestId}")]
-        public ResponseDTO GetRequestsById([FromRoute]int requestId)
+        public async Task<ResponseDTO> GetRequestByIdAsync([FromRoute]int requestId)
         {
-            var response = _requestService.GetRequestById(requestId);
+            var response = await  _requestService.GetRequestByIdAsync(requestId);
             return response; 
         }//getr req by emp id..
 
         [HttpPost("create")]
-        public ResponseDTO CreateRequestForm( CourseRequestForm form)
+        public async Task<ResponseDTO> CreateRequestFormAsync( CourseRequestForm form)
         {
-            var response = _requestService.CreateRequestForm(form);
+            var response = await _requestService.CreateRequestFormAsync(form);
             return response;
         }
 
         [HttpPut("update")]
-        public ResponseDTO UpdateRequestFormById(int requestId,CourseRequestForm form)
+        public async Task<ResponseDTO> UpdateRequestFormAsync(int requestId,CourseRequestForm form)
         {
-            var response = _requestService.UpdateRequestFormById(requestId, form);
+            var response = await _requestService.UpdateRequestFormAsync(requestId, form);
             return response;
         }
 
         [HttpDelete("Delete")]
-        public ResponseDTO DeleteRequestFormById(int requestId)
+        public async Task<ResponseDTO> DeleteRequestFormAsync(int requestId)
         {
-            var response = _requestService.DeleteRequestFormById(requestId);
+            var response = await _requestService.DeleteRequestFormAsync(requestId);
             return response;
         }
 
         [HttpPatch("Approve/{requestId}")]
-        public ResponseDTO ApproveRequestForm([FromRoute] int requestId)
+        public async Task<ResponseDTO> ApproveRequestFormAsync([FromRoute] int requestId)
         {
-            var response = _requestService.ApproveRequestForm(requestId);
+            var response = await _requestService.ApproveRequestFormAsync(requestId);
             return response;
         }
 
         [HttpPatch("Reject/{requestId}")]
-        public ResponseDTO RejectRequestForm([FromRoute] int requestId)
+        public async Task<ResponseDTO> RejectRequestFormAsync([FromRoute] int requestId)
         {
-            var response = _requestService.RejectRequestForm(requestId);
+            var response = await _requestService.RejectRequestFormAsync(requestId);
             return response;
         }
 
         [HttpGet("Requests")]
-        public ResponseDTO GetAllCourseRequestForms()
+        public async Task<ResponseDTO> GetAllRequestsAsync()
         {
-            var response = _requestService.GetRequests();
+            var response = await _requestService.GetAllRequestsAsync();
             return response;
         }
 
         [HttpGet("Requests/Employee/{employeeId}")]
-        public ResponseDTO GetRequestsByEmployeeId([FromRoute] int employeeId)
+        public async Task<ResponseDTO> GetRequestsByEmployeeIdAsync([FromRoute] int employeeId)
         {
-            var response = _requestService.GetRequestsByEmployeeId(employeeId);
+            var response = await _requestService.GetRequestsByEmployeeIdAsync(employeeId);
             return response;
         }
     }

@@ -142,6 +142,16 @@ public class CourseProgressRepository
             return rowsAffected > 0;
         }
     }
+
+    public async Task<bool> DeleteCourseProgressAsync(int progressId)
+    {
+        using (IDbConnection dbConnection = _dbHelper.GetConnection())
+        {
+            const string query = "DELETE FROM CourseProgress WHERE ProgressID = @ProgressID";
+            int rowsAffected = await dbConnection.ExecuteAsync(query, new { ProgressID = progressId });
+            return rowsAffected > 0;
+        }
+    }
 }
 //```   
 //### **Key Refinements:**

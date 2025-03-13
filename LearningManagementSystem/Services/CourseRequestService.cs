@@ -84,7 +84,7 @@ namespace LearningManagementSystem.Services
             return _responseDTO;
         }
 
-        public async Task<ResponseDTO> GetRequestsAsync()
+        public async Task<ResponseDTO> GetAllRequestsAsync()
         {
             var requestsList = await _repository.GetAllRequestsAsync();
 

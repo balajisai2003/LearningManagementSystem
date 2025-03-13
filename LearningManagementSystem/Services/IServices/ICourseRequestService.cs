@@ -11,7 +11,7 @@ namespace LearningManagementSystem.Services.IServices
         Task<ResponseDTO> CreateRequestFormAsync(CourseRequestForm form);
         Task<ResponseDTO> DeleteRequestFormAsync(int requestId);
         Task<ResponseDTO> GetRequestByIdAsync(int requestId);
-        Task<ResponseDTO> GetRequestsAsync();
+        Task<ResponseDTO> GetAllRequestsAsync();
         Task<ResponseDTO> RejectRequestFormAsync(int requestId);
         Task<ResponseDTO> UpdateRequestFormAsync(int requestId, CourseRequestForm form);
         Task<ResponseDTO> GetRequestsByEmployeeIdAsync(int employeeId);
