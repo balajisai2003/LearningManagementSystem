@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DatabaseHelper>();
 builder.Services.AddScoped<ICourseRequestService, CourseRequestService>();
 builder.Services.AddScoped<IBrownBagService, BrownBagService>();
+builder.Services.AddScoped<ICourseProgressService, CourseProgressService>();
 
 var app = builder.Build();
 
