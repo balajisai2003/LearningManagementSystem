@@ -1,4 +1,6 @@
-﻿namespace LearningManagementSystem.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LearningManagementSystem.Models
 {
     public class Brownbag
     {

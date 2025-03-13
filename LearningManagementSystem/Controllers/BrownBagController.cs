@@ -15,12 +15,7 @@ namespace LearningManagementSystem.Controllers
         {
             _brownBagService = brownBagService;
         }
-        [HttpGet]
-        public string Get()
-        {
-            return "Hello World";
-        }
-
+        
         [HttpGet("Requests")]
         public ResponseDTO GetAllBrownBagSessions()
         {

@@ -26,9 +26,23 @@ namespace LearningManagementSystem.Repository
         {
             using (var db = _dbHelper.GetConnection())
             {
-                string sql = "Select * from BrownbagRquest where EmpId = @EmpID";
-                var response = db.Query<Brownbag>(sql, employeeId);
+                string sql = "Select * from BrownbagRequest where EmployeeId = @EmployeeId";
+                var response = db.Query<Brownbag>(sql, new { EmployeeId = employeeId});
                 return response;
+            }
+        }
+
+        public bool RequestDateChecker(DateTime requestDate)
+        {
+            using (var db = _dbHelper.GetConnection())
+            {
+                var sql = "SELECT COUNT(*) FROM BrownbagRequest WHERE RequestDate = @RequestDate";
+                int requestExists = db.ExecuteScalar<int>(sql, new { RequestDate = requestDate });
+                if(requestExists > 0)
+                {
+                    return true;
+                }
+                return false;
             }
         }
 
@@ -36,17 +50,26 @@ namespace LearningManagementSystem.Repository
         {
             using (var db = _dbHelper.GetConnection())
             {
-                var checkSql = "SELECT COUNT(*) FROM BrownbagRequest WHERE RequestDate = @RequestDate";
-                int count = db.ExecuteScalar<int>(checkSql, new { brownbag.RequestDate });
+                
+                bool requestExists = RequestDateChecker(brownbag.RequestDate);
 
-                if (count > 0)
+                if (requestExists)
                 {
                     Console.WriteLine("There already exists a brownbag session on the choosen date!!");
                     return 0;
                 }
 
-                var sql = "INSERT INTO BrownbagRequest (EmpID, EmpName, TopicType, TopicName, Agenda, SpeakerDescription, RequestDate) VALUES (@EmpID, @EmpName, @TopicType, @TopicName, @Agenda, @SpeakerDescription, @RequestDate)";
-                int response = db.Execute(sql, brownbag);
+                var sql = "INSERT INTO BrownbagRequest (EmployeeId, EmployeeName, TopicType, TopicName, Agenda, SpeakerDescription, RequestDate) VALUES (@EmployeeID, @EmployeeName, @TopicType, @TopicName, @Agenda, @SpeakerDescription, @RequestDate)";
+                int response = db.Execute(sql, new
+                {
+                    brownbag.EmployeeID,
+                    brownbag.EmployeeName,
+                    brownbag.TopicType,
+                    brownbag.TopicName,
+                    brownbag.Agenda,
+                    brownbag.SpeakerDescription,
+                    brownbag.RequestDate
+                });
                 return response;
             }
         }
@@ -55,17 +78,18 @@ namespace LearningManagementSystem.Repository
         {
             using (var db = _dbHelper.GetConnection())
             {
-                var checkSql = "SELECT COUNT(*) FROM BrownbagRequest WHERE RequestDate = @RequestDate";
-                int count = db.ExecuteScalar<int>(checkSql, new { brownbag.RequestDate });
+                bool requestExists = RequestDateChecker(brownbag.RequestDate);
 
-                if (count > 0)
+                if (requestExists)
                 {
                     Console.WriteLine("There already exists a brownbag session on the choosen date!!");
                     return 0;
                 }
 
-                var sql = "UPDATE BrownbagRequest SET EmpID = @EmpID, EmpName = @EmpName, TopicType = @TopicType, TopicName = @TopicName, Agenda = @Agenda, SpeakerDescription = @SpeakerDescription, RequestDate = @RequestDate WHERE RequestID = @RequestID";
-                int response = db.Execute(sql, new { brownbag.EmployeeID, brownbag.EmployeeName, brownbag.TopicType, brownbag.TopicName, brownbag.Agenda, brownbag.SpeakerDescription, brownbag.RequestDate, RequestID = id });
+                var sql = "UPDATE BrownbagRequest SET EmployeeID = @EmployeeId, EmployeeName = @EmployeeName, TopicType = @TopicType, TopicName = @TopicName, Agenda = @Agenda, SpeakerDescription = @SpeakerDescription, RequestDate = @RequestDate WHERE RequestID = @RequestID";
+                int response = db.Execute(sql, new 
+                { brownbag.EmployeeID, brownbag.EmployeeName, brownbag.TopicType, brownbag.TopicName, brownbag.Agenda, brownbag.SpeakerDescription, brownbag.RequestDate, RequestID = id 
+                });
                 return response;
             }
         }
