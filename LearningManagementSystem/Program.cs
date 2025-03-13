@@ -1,4 +1,5 @@
 using LearningManagementSystem.Helpers;
+using LearningManagementSystem.Repository;
 using LearningManagementSystem.Services;
 using LearningManagementSystem.Services.IServices;
 
@@ -11,6 +12,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DatabaseHelper>();
+builder.Services.AddScoped<CourseRequestFormRepository>();
+
 builder.Services.AddScoped<ICourseRequestService, CourseRequestService>();
 builder.Services.AddScoped<IBrownBagService, BrownBagService>();
 builder.Services.AddScoped<ICourseProgressService, CourseProgressService>();
