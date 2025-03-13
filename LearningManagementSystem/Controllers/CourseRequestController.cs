@@ -36,28 +36,28 @@ namespace LearningManagementSystem.Controllers
             return response;
         }
 
-        [HttpPost("update")]
+        [HttpPut("update")]
         public ResponseDTO UpdateRequestFormById(int requestId,CourseRequestForm form)
         {
             var response = _requestService.UpdateRequestFormById(requestId, form);
             return response;
         }
 
-        [HttpPost("Delete")]
+        [HttpDelete("Delete")]
         public ResponseDTO DeleteRequestFormById(int requestId)
         {
             var response = _requestService.DeleteRequestFormById(requestId);
             return response;
         }
 
-        [HttpPost("Approve/{requestId}")]
+        [HttpPatch("Approve/{requestId}")]
         public ResponseDTO ApproveRequestForm([FromRoute] int requestId)
         {
             var response = _requestService.ApproveRequestForm(requestId);
             return response;
         }
 
-        [HttpPost("Reject/{requestId}")]
+        [HttpPatch("Reject/{requestId}")]
         public ResponseDTO RejectRequestForm([FromRoute] int requestId)
         {
             var response = _requestService.RejectRequestForm(requestId);
