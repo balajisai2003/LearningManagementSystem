@@ -1,22 +1,22 @@
 ﻿using LearningManagementSystem.Models;
 using LearningManagementSystem.Models.DTOs;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LearningManagementSystem.Services.IServices
 {
     public interface ICourseProgressService
     {
-        public ResponseDTO GetAllCourseProgresses();
-        public ResponseDTO GetCourseProgressesById(int ProgressId);
-        public ResponseDTO GetEmployeeCourseProgressesById(int EmployeeId);
-        public ResponseDTO GetCourseProgressesByStatus(string status, int EmployeeId = 0);
-        public ResponseDTO GetCourseProgressesByCourseId(int CourseId);
-        public ResponseDTO AddCourseProgress(CourseProgress courseProgress);
-        public ResponseDTO StartCourse(int ProgressId);
-        public ResponseDTO CompleteCourse(int ProgressId);
-        public ResponseDTO ResetCourse(int ProgressId);
-        public ResponseDTO UpdateCourseProgress(int ProgressId, CourseProgress courseProgress);
-        public ResponseDTO DeleteCourseProgress(int ProgressId);
-
-
+        Task<ResponseDTO> GetAllCourseProgressesAsync();
+        Task<ResponseDTO> GetCourseProgressByIdAsync(int progressId);
+        Task<ResponseDTO> GetEmployeeCourseProgressesAsync(int employeeId);
+        Task<ResponseDTO> GetCourseProgressesByStatusAsync(string status, int employeeId = 0);
+        Task<ResponseDTO> GetCourseProgressesByCourseIdAsync(int courseId);
+        Task<ResponseDTO> AddCourseProgressAsync(CourseProgress courseProgress);
+        Task<ResponseDTO> StartCourseAsync(int progressId);
+        Task<ResponseDTO> CompleteCourseAsync(int progressId);
+        Task<ResponseDTO> ResetCourseAsync(int progressId);
+        Task<ResponseDTO> UpdateCourseProgressAsync(int progressId, CourseProgress courseProgress);
+        Task<ResponseDTO> DeleteCourseProgressAsync(int progressId);
     }
 }
