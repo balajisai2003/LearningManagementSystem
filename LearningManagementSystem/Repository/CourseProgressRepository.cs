@@ -162,5 +162,16 @@ namespace LearningManagementSystem.Repository
                 return dbConnection.Query<CourseProgress>(query, new { StartDate = startDate, EndDate = endDate }).ToList();
             }
         }
+
+        // Reset Course Progress
+        public bool ResetCourseProgress(int ProgressId)
+        {
+            using (IDbConnection dbConnection = _dbHelper.GetConnection())
+            {
+                const string query = "UPDATE CourseProgress SET StartDate = NULL, EndDate = NULL, Status = 'Not Started', MonthCompleted = NULL WHERE ProgressID = @ProgressID";
+                int rowsAffected = dbConnection.Execute(query, new { ProgressID = ProgressId });
+                return rowsAffected > 0;
+            }
+        }
     }
 }
