@@ -7,7 +7,7 @@ namespace LearningManagementSystem.Services.IServices
 {
     public interface ICourseRequestService
     {
-        Task<ResponseDTO> ApproveRequestFormAsync(int requestId);
+        Task<ResponseDTO> ApproveRequestFormAsync(int requestId, string newOrReused);
         Task<ResponseDTO> CreateRequestFormAsync(CourseRequestForm form);
         Task<ResponseDTO> DeleteRequestFormAsync(int requestId);
         Task<ResponseDTO> GetRequestByIdAsync(int requestId);

@@ -35,6 +35,51 @@ public class CourseProgressRepository
         }
     }
 
+    public class AddMultipleCourseProgressResult
+    {
+        public List<int> Added { get; set; }
+        public List<int> Failed { get; set; }
+        public bool success { get; set; } = false;
+    }
+
+    // Add Multiple Course Progress
+    public async Task<AddMultipleCourseProgressResult> AddMultipleCourseProgressAsync(int CourseId, List<int> EmployeeIds, string newOrReused)
+    {
+        var result = new AddMultipleCourseProgressResult
+        {
+            Added = new List<int>(),
+            Failed = new List<int>()
+        };
+
+        bool isSuccess = false;
+        foreach (var employeeId in EmployeeIds)
+        {
+            isSuccess = await AddCourseProgressAsync(CourseId, employeeId, newOrReused);
+            if (isSuccess)
+            {
+                result.Added.Add(employeeId);
+            }
+            else
+            {
+                result.Failed.Add(employeeId);
+            }
+        }
+
+
+
+        if (result.Failed.Count > 0)
+        {
+            result.success = false;
+        }
+        else
+        {
+            result.success = true;
+        }
+
+        
+            return result;
+    }
+
     // Update Course Status (for starting or completing the course)
     public async Task<bool> UpdateCourseProgressAsync(int progressId, string status, DateTime? date = null)
     {

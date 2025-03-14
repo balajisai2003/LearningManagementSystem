@@ -51,9 +51,9 @@ namespace LearningManagementSystem.Controllers
         }
 
         [HttpPatch("Approve/{requestId}")]
-        public async Task<ResponseDTO> ApproveRequestFormAsync([FromRoute] int requestId)
+        public async Task<ResponseDTO> ApproveRequestFormAsync([FromRoute] int requestId, string newOrReused)
         {
-            var response = await _requestService.ApproveRequestFormAsync(requestId);
+            var response = await _requestService.ApproveRequestFormAsync(requestId, newOrReused);
             return response;
         }
 

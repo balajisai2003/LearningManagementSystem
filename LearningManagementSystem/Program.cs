@@ -13,6 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DatabaseHelper>();
 builder.Services.AddScoped<CourseRequestFormRepository>();
+builder.Services.AddScoped<CourseProgressRepository>();
+
 
 builder.Services.AddScoped<ICourseRequestService, CourseRequestService>();
 builder.Services.AddScoped<IBrownBagService, BrownBagService>();

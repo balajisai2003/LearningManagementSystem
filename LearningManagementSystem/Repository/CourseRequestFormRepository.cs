@@ -26,7 +26,7 @@ namespace LearningManagementSystem.Repository
 
         public async Task<CourseRequestForm> GetRequestByIdAsync(int id)
         {
-            using (var db = _dbHelper.GetConnection())
+            using (var db = _dbHelper.GetConnection()) 
             {
                 var sql = "SELECT * FROM CourseRequestForm WHERE RequestID = @RequestID";
                 return await db.QueryFirstOrDefaultAsync<CourseRequestForm>(sql, new { RequestID = id });

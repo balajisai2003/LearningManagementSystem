@@ -73,9 +73,10 @@ namespace LearningManagementSystem.Services
             return GenerateResponse(isReset, "Course progress reset successfully.", "Failed to reset course progress.");
         }
 
-        public Task<ResponseDTO> StartCourseAsync(int progressId)
+        public async Task<ResponseDTO> StartCourseAsync(int progressId)
         {
-            throw new NotImplementedException();
+            bool isUpdated = await _repository.UpdateCourseProgressAsync(progressId,"Started");
+            return GenerateResponse(isUpdated, "Course progress updated successfully.", "Failed to update progress.");
         }
 
         public async Task<ResponseDTO> UpdateCourseProgressAsync(int progressId, CourseProgress courseProgress)
