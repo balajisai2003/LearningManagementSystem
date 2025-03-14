@@ -87,19 +87,19 @@ namespace LearningManagementSystem.Controllers
             return response;
         }
 
-        #region haven't been implemented yet
         [HttpGet("status/{status}")]
         public async Task<ResponseDTO> GetCourseProgressesByStatus([FromRoute] string status, [FromQuery] int employeeId = 0)
         {
-           throw new NotImplementedException();
+           var response = await _courseProgressService.GetCourseProgressesByStatusAsync(status, employeeId);
+            return response;
         }
 
         [HttpPost("reset/{progressId}")]
         public async Task<ResponseDTO> ResetCourse([FromRoute] int progressId)
         {
-            throw new NotImplementedException();
+            var response = await _courseProgressService.ResetCourseAsync(progressId);
+            return response;
         }
-        #endregion
 
     }
 }

@@ -17,196 +17,135 @@ public class CourseProgressRepository
         _dbHelper = dbHelper;
     }
 
-    // Add Course Progress
-    public async Task<bool> AddCourseProgressAsync(int CourseId, int EmployeeId, string newOrReused)
+    public async Task<bool> AddCourseProgressAsync(int courseId, int employeeId, string newOrReused)
     {
         const string query = @"INSERT INTO CourseProgress (CourseID, EmployeeID, Status, NewOrReused) 
                               VALUES (@CourseID, @EmployeeID, @Status, @NewOrReused)";
-        using (var connection = _dbHelper.GetConnection())
+
+        using var connection = _dbHelper.GetConnection();
+        int rowsAffected = await connection.ExecuteAsync(query, new
         {
-            int rowsAffected = await connection.ExecuteAsync(query, new
-            {
-                CourseID = CourseId,
-                EmployeeID = EmployeeId,
-                Status = "Not Started",
-                NewOrReused = newOrReused
-            });
-            return rowsAffected > 0;
-        }
+            CourseID = courseId,
+            EmployeeID = employeeId,
+            Status = "Not Started",
+            NewOrReused = newOrReused
+        });
+        return rowsAffected > 0;
     }
 
-    public class AddMultipleCourseProgressResult
+    public async Task<AddMultipleCourseProgressResult> AddMultipleCourseProgressAsync(int courseId, List<int> employeeIds, string newOrReused)
     {
-        public List<int> Added { get; set; }
-        public List<int> Failed { get; set; }
-        public bool success { get; set; } = false;
-    }
-
-    // Add Multiple Course Progress
-    public async Task<AddMultipleCourseProgressResult> AddMultipleCourseProgressAsync(int CourseId, List<int> EmployeeIds, string newOrReused)
-    {
-        var result = new AddMultipleCourseProgressResult
+        var result = new AddMultipleCourseProgressResult();
+        foreach (var employeeId in employeeIds)
         {
-            Added = new List<int>(),
-            Failed = new List<int>()
-        };
-
-        bool isSuccess = false;
-        foreach (var employeeId in EmployeeIds)
-        {
-            isSuccess = await AddCourseProgressAsync(CourseId, employeeId, newOrReused);
-            if (isSuccess)
-            {
+            if (await AddCourseProgressAsync(courseId, employeeId, newOrReused))
                 result.Added.Add(employeeId);
-            }
             else
-            {
                 result.Failed.Add(employeeId);
-            }
         }
-
-
-
-        if (result.Failed.Count > 0)
-        {
-            result.success = false;
-        }
-        else
-        {
-            result.success = true;
-        }
-
-        
-            return result;
+        result.Success = result.Failed.Count == 0;
+        return result;
     }
 
-    // Update Course Status (for starting or completing the course)
     public async Task<bool> UpdateCourseProgressAsync(int progressId, string status, DateTime? date = null)
     {
-        string query = "UPDATE CourseProgress SET Status = @Status, ";
+        if (!await CourseProgressExistsAsync(progressId))
+            return false;
 
-        var parameters = new DynamicParameters();
-        parameters.Add("@ProgressID", progressId);
-        parameters.Add("@Status", status);
+        string query = "UPDATE CourseProgress SET Status = @Status, ";
+        var parameters = new DynamicParameters(new { ProgressID = progressId, Status = status });
 
         if (status == "Started")
         {
-            query += "StartDate = @Date WHERE ProgressID = @ProgressID";
+            query += "StartDate = @Date, LastUpdated = @Date WHERE ProgressID = @ProgressID";
             parameters.Add("Date", date ?? DateTime.UtcNow);
         }
         else if (status == "Completed")
         {
-            query += "EndDate = @Date, MonthCompleted = @MonthCompleted WHERE ProgressID = @ProgressID";
-            parameters.Add("Date", date ?? DateTime.Now);
-            parameters.Add("MonthCompleted", DateTime.Now.ToString("MMM yyyy", CultureInfo.InvariantCulture));
-            parameters.Add("ProgressID", progressId);
+            query += "EndDate = @Date, LastUpdated = @Date, MonthCompleted = @MonthCompleted WHERE ProgressID = @ProgressID";
+            parameters.Add("Date", date ?? DateTime.UtcNow);
+            parameters.Add("MonthCompleted", (date ?? DateTime.UtcNow).ToString("MMM yyyy", CultureInfo.InvariantCulture));
         }
         else
         {
             return false;
         }
 
-        using (var connection = _dbHelper.GetConnection())
-        {
-            int rowsAffected = await connection.ExecuteAsync(query, parameters);
-            return rowsAffected > 0;
-        }
+        using var connection = _dbHelper.GetConnection();
+        return await connection.ExecuteAsync(query, parameters) > 0;
     }
 
-    // Check if Course Progress Exists for a given ProgressID and EmployeeID
-    public async Task<bool> CourseProgressExistsAsync(int ProgressId, int EmployeeId)
+    public async Task<bool> CourseProgressExistsAsync(int progressId, int? employeeId = null)
     {
-        using (var connection = _dbHelper.GetConnection())
+        using var connection = _dbHelper.GetConnection();
+        string query = "SELECT COUNT(1) FROM CourseProgress WHERE ProgressID = @ProgressId";
+        var parameters = new DynamicParameters(new { ProgressId = progressId });
+
+        if (employeeId.HasValue)
         {
-            const string query = "SELECT COUNT(1) FROM CourseProgress WHERE ProgressID = @ProgressId AND EmployeeID = @EmployeeId";
-            int count = await connection.ExecuteScalarAsync<int>(query, new { ProgressId, EmployeeId });
-            return count > 0;
+            query += " AND EmployeeID = @EmployeeId";
+            parameters.Add("EmployeeId", employeeId.Value);
         }
+
+        return await connection.ExecuteScalarAsync<int>(query, parameters) > 0;
     }
 
-    // Get Course Progress by ProgressID
     public async Task<CourseProgress> GetCourseProgressByIdAsync(int progressId)
     {
         const string query = "SELECT * FROM CourseProgress WHERE ProgressID = @ProgressID";
-        using (var connection = _dbHelper.GetConnection())
-        {
-            return await connection.QueryFirstOrDefaultAsync<CourseProgress>(query, new { ProgressID = progressId });
-        }
+        using var connection = _dbHelper.GetConnection();
+        return await connection.QueryFirstOrDefaultAsync<CourseProgress>(query, new { ProgressID = progressId });
     }
 
-    // Get Course Progress by filters
+    public async Task<IEnumerable<CourseProgress>> GetCourseProgressesByStatusAsync(string status, int employeeId = 0)
+    {
+        var query = "SELECT * FROM CourseProgress WHERE Status = @Status";
+        var parameters = new DynamicParameters(new { Status = status });
+        if (employeeId > 0)
+        {
+            query += " AND EmployeeID = @EmployeeID";
+            parameters.Add("EmployeeID", employeeId);
+        }
+        using var connection = _dbHelper.GetConnection();
+        return await connection.QueryAsync<CourseProgress>(query, parameters);
+    }
+
     public async Task<IEnumerable<CourseProgress>> GetCourseProgressAsync(int? courseId = null, int? employeeId = null, string status = null, string monthYear = null, DateTime? startDate = null, DateTime? endDate = null)
     {
         var query = "SELECT * FROM CourseProgress WHERE 1=1";
         var parameters = new DynamicParameters();
 
-        if (courseId.HasValue)
-        {
-            query += " AND CourseID = @CourseID";
-            parameters.Add("CourseID", courseId);
-        }
-        if (employeeId.HasValue)
-        {
-            query += " AND EmployeeID = @EmployeeID";
-            parameters.Add("EmployeeID", employeeId.Value);
-        }
-        if (!string.IsNullOrEmpty(status))
-        {
-            query += " AND Status = @Status";
-            parameters.Add("Status", status);
-        }
-        if (!string.IsNullOrEmpty(monthYear))
-        {
-            query += " AND MonthCompleted = @MonthYear";
-            parameters.Add("MonthYear", monthYear);
-        }
-        if (startDate.HasValue)
-        {
-            query += " AND StartDate >= @StartDate";
-            parameters.Add("StartDate", startDate.Value);
-        }
-        if (endDate.HasValue)
-        {
-            query += " AND EndDate <= @EndDate";
-            parameters.Add("EndDate", endDate.Value);
-        }
+        if (courseId.HasValue) query += " AND CourseID = @CourseID";
+        if (employeeId.HasValue) query += " AND EmployeeID = @EmployeeID";
+        if (!string.IsNullOrEmpty(status)) query += " AND Status = @Status";
+        if (!string.IsNullOrEmpty(monthYear)) query += " AND MonthCompleted = @MonthYear";
+        if (startDate.HasValue) query += " AND StartDate >= @StartDate";
+        if (endDate.HasValue) query += " AND EndDate <= @EndDate";
 
-        using (var connection = _dbHelper.GetConnection())
-        {
-            return (await connection.QueryAsync<CourseProgress>(query, parameters)).ToList();
-        }
+        parameters.AddDynamicParams(new { courseId, employeeId, status, monthYear, startDate, endDate });
+
+        using var connection = _dbHelper.GetConnection();
+        return await connection.QueryAsync<CourseProgress>(query, parameters);
     }
 
-    // Reset Course Progress
-    public async Task<bool> ResetCourseProgressAsync(int ProgressId)
+    public async Task<bool> ResetCourseProgressAsync(int progressId)
     {
-        using (IDbConnection dbConnection = _dbHelper.GetConnection())
-        {
-            const string query = "UPDATE CourseProgress SET StartDate = NULL, EndDate = NULL, Status = 'Not Started', MonthCompleted = NULL WHERE ProgressID = @ProgressID";
-            int rowsAffected = await dbConnection.ExecuteAsync(query, new { ProgressID = ProgressId });
-            return rowsAffected > 0;
-        }
+        const string query = "UPDATE CourseProgress SET StartDate = NULL, EndDate = NULL, Status = 'Not Started', MonthCompleted = NULL WHERE ProgressID = @ProgressID";
+        using var connection = _dbHelper.GetConnection();
+        return await connection.ExecuteAsync(query, new { ProgressID = progressId }) > 0;
     }
 
     public async Task<bool> DeleteCourseProgressAsync(int progressId)
     {
-        using (IDbConnection dbConnection = _dbHelper.GetConnection())
-        {
-            const string query = "DELETE FROM CourseProgress WHERE ProgressID = @ProgressID";
-            int rowsAffected = await dbConnection.ExecuteAsync(query, new { ProgressID = progressId });
-            return rowsAffected > 0;
-        }
+        const string query = "DELETE FROM CourseProgress WHERE ProgressID = @ProgressID";
+        using var connection = _dbHelper.GetConnection();
+        return await connection.ExecuteAsync(query, new { ProgressID = progressId }) > 0;
     }
 }
-//```   
-//### **Key Refinements:**
-//1. * *Refactored Filtering Methods**: Introduced a single method `GetCourseProgressAsync` that allows filtering by course, employee, status, and date range.
-//2. **Replaced redundant methods**:
-//   -Removed separate `GetEmployeeCourseProgress`, `GetInProgressCourses`, `GetCoursesByStatus`, etc., and combined them into a flexible filtering method.
-//3. **Better Performance**:
-//   -Used parameterized queries for security.
-//   - Used `Execute` and `ExecuteScalar<int>` to check updates.
-//   - Added async versions (`Task<bool>` and `Task<IEnumerable<CourseProgress>>`) to ensure non-blocking execution.
-//4. **Error Handling Improvement**: Wrapped `try-catch` blocks in key database operations.
 
-//This version improves maintainability, reduces redundancy, and enhances query flexibility. Let me know if you need more refinements! 🚀
+public class AddMultipleCourseProgressResult
+{
+    public List<int> Added { get; set; } = new();
+    public List<int> Failed { get; set; } = new();
+    public bool Success { get; set; }
+}
