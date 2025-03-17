@@ -23,9 +23,9 @@ namespace LearningManagementSystem.Controllers
             return Ok("Excel Report");
         }
         [HttpGet("report")]
-        public async Task<IActionResult> GenerateExcelReport(DateTime startDate, DateTime endDate)
+        public async Task<IActionResult> GenerateExcelReport()
         {
-            return await excelReport.DownloadReport(startDate, endDate);
+            return await excelReport.DownloadReport();
         }
     }
 }

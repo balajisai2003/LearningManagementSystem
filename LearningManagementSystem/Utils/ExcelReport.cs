@@ -14,19 +14,19 @@ namespace LearningManagementSystem.Utils
             _dbHelper = dbhelper;            
         }
 
-        public async Task<IActionResult> DownloadReport(DateTime startDate , DateTime endDate)
+        public async Task<IActionResult> DownloadReport()
         {
             using (var connection = _dbHelper.GetConnection())
             {
                 
-                IEnumerable<ExcelReportModel> response = await connection.QueryAsync<ExcelReportModel>("dbo.ExcelData", new { RequestRangeStartDate = startDate, RequestRangeEndDate = endDate }, commandType: System.Data.CommandType.StoredProcedure);
+                IEnumerable<ExcelReportModel> response = await connection.QueryAsync<ExcelReportModel>("dbo.New_ExcelData", commandType: System.Data.CommandType.StoredProcedure);
 
                 if (response != null)
                 {
                     Console.WriteLine("Stored Procedure executed");
                     foreach(var item in response)
                     {
-                        Console.Write(item.EmployeeID+" "+item.RequestRangeEndDate+" "+item.RequestRangeEndDate+" "+item.CourseTitle);
+                        Console.WriteLine(item.ParticipantID+" "+item.StartDate+" "+item.EndDate+" "+item.CourseTitle);
                     }
                     return new OkObjectResult(response);
                 }
