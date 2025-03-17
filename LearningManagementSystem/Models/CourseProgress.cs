@@ -8,6 +8,7 @@ namespace LearningManagementSystem.Models
         public int EmployeeID { get; set; }
         public int CourseID { get; set; } // Get the course details from CourseID
         //public int Progress { get; set; }  // 0 to 100
+        public int RequestorID { get; set; }
         public string Status { get; set; }  // "default : Not Started", "In Progress", "Completed"
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
         public DateTime? StartDate { get; set; }
