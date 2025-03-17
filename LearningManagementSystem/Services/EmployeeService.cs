@@ -125,8 +125,9 @@ namespace LearningManagementSystem.Services
                 // Create a new Employee object
                 var newEmployee = new EmpRequestDTO
                 {
+                    EmployeeID = request.EmployeeID,
                     Name = request.Name,
-                    Cadre = request.Cadre,
+                    Designation = request.Designation,
                     TechGroup = request.TechGroup,
                     Role = request.Role,
                     Email = request.Email,
@@ -152,7 +153,7 @@ namespace LearningManagementSystem.Services
                     var employeeToUpdate = new EmpRequestDTO
                     {
                         Name = request.Name,
-                        Cadre = request.Cadre,
+                        Designation = request.Designation,
                         TechGroup = request.TechGroup,
                         Role = request.Role,
                         Email = request.Email,

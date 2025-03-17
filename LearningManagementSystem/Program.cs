@@ -1,6 +1,7 @@
 using LearningManagementSystem;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
+using LearningManagementSystem.Models.DTOs;
 using LearningManagementSystem.Repository;
 using LearningManagementSystem.Services;
 using LearningManagementSystem.Services.IServices;
@@ -47,13 +48,16 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSett
 builder.Services.AddSingleton<DatabaseHelper>();
 builder.Services.AddScoped<CourseRequestFormRepository>();
 builder.Services.AddScoped<CourseProgressRepository>();
+builder.Services.AddScoped<EmployeeRepository>();
 
 
 builder.Services.AddScoped<ICourseRequestService, CourseRequestService>();
 builder.Services.AddScoped<IBrownBagService, BrownBagService>();
 builder.Services.AddScoped<ICourseProgressService, CourseProgressService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<ITokenGenerator, TokenGenerator>(); 
+builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
+
+builder.Services.AddTransient<ResponseDTO>();
 
 builder.AddAppAuth();
 builder.Services.AddAuthorization();
