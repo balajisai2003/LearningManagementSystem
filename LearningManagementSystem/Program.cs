@@ -61,6 +61,17 @@ builder.Services.AddTransient<ResponseDTO>();
 
 builder.AddAppAuth();
 builder.Services.AddAuthorization();
+//Adding cors.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
