@@ -15,7 +15,6 @@
         public int DurationInHours { get; set; }
         public string status { get; set; }
         public DateTime? StartDate { get; set; } = null; 
-
         public DateTime? EndDate { get; set; } = null;
         public string MonthCompleted { get; set; }
         public decimal Price { get; set; }

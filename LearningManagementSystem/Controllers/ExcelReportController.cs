@@ -1,5 +1,6 @@
 ﻿using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -23,9 +24,9 @@ namespace LearningManagementSystem.Controllers
             return Ok("Excel Report");
         }
         [HttpGet("report")]
-        public async Task<IActionResult> GenerateExcelReport()
+        public async Task<IActionResult> GetExcelReport()
         {
-            return await excelReport.DownloadReport();
+            return await excelReport.GetReport();
         }
     }
 }

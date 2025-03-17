@@ -14,7 +14,7 @@ namespace LearningManagementSystem.Utils
             _dbHelper = dbhelper;            
         }
 
-        public async Task<IActionResult> DownloadReport()
+        public async Task<IActionResult> GetReport()
         {
             using (var connection = _dbHelper.GetConnection())
             {
@@ -32,23 +32,7 @@ namespace LearningManagementSystem.Utils
                 }
                 Console.WriteLine("Stored Procedure not executed");
                 return new OkResult();
-
-
-
-                //SqlCommand sqlCommand = new SqlCommand("dbo.ExcelData", sqlConnection);
-                //sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
-                //sqlCommand.Parameters.AddWithValue("@StartDate", startDate);
-                //sqlCommand.Parameters.AddWithValue("@EndDate", endDate);
-                //SqlDataReader reader = sqlCommand.ExecuteReader();
-                //var report = await reader.ReadAsync();
-                //if (report)
-                //{
-                //    return new OkResult();
-                //}
             }
-            return new NotFoundResult();
-
-
         }
     }
 }
