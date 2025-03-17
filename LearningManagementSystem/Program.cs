@@ -1,7 +1,11 @@
+using LearningManagementSystem;
 using LearningManagementSystem.Helpers;
+using LearningManagementSystem.Models;
 using LearningManagementSystem.Repository;
 using LearningManagementSystem.Services;
 using LearningManagementSystem.Services.IServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +14,36 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(name: JwtBearerDefaults.AuthenticationScheme, securityScheme: new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter the Bearer Auhorization string as following: `Bearer` Generate-JWT-Token",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = JwtBearerDefaults.AuthenticationScheme
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = JwtBearerDefaults.AuthenticationScheme
+                }
+            },
+            new string[]{}
+        }
+    });
+});
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+
+
+
 builder.Services.AddSingleton<DatabaseHelper>();
 builder.Services.AddScoped<CourseRequestFormRepository>();
 builder.Services.AddScoped<CourseProgressRepository>();
@@ -19,6 +52,11 @@ builder.Services.AddScoped<CourseProgressRepository>();
 builder.Services.AddScoped<ICourseRequestService, CourseRequestService>();
 builder.Services.AddScoped<IBrownBagService, BrownBagService>();
 builder.Services.AddScoped<ICourseProgressService, CourseProgressService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<ITokenGenerator, TokenGenerator>(); 
+
+builder.AddAppAuth();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
