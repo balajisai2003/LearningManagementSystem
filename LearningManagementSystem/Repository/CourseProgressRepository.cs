@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
+using LearningManagementSystem.Models.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -110,22 +111,66 @@ public class CourseProgressRepository
         return await connection.QueryAsync<CourseProgress>(query, parameters);
     }
 
-    public async Task<IEnumerable<CourseProgress>> GetCourseProgressAsync(int? courseId = null, int? employeeId = null, string status = null, string monthYear = null, DateTime? startDate = null, DateTime? endDate = null)
+    //public async Task<IEnumerable<CourseProgress>> GetCourseProgressAsync(int? courseId = null, int? employeeId = null, string status = null, string monthYear = null, DateTime? startDate = null, DateTime? endDate = null)
+    //{
+    //    var query = "SELECT * FROM CourseProgress WHERE 1=1";
+    //    var parameters = new DynamicParameters();
+
+    //    if (courseId.HasValue) query += " AND CourseID = @CourseID";
+    //    if (employeeId.HasValue) query += " AND EmployeeID = @EmployeeID";
+    //    if (!string.IsNullOrEmpty(status)) query += " AND Status = @Status";
+    //    if (!string.IsNullOrEmpty(monthYear)) query += " AND MonthCompleted = @MonthYear";
+    //    if (startDate.HasValue) query += " AND StartDate >= @StartDate";
+    //    if (endDate.HasValue) query += " AND EndDate <= @EndDate";
+
+    //    parameters.AddDynamicParams(new { courseId, employeeId, status, monthYear, startDate, endDate });
+
+    //    using var connection = _dbHelper.GetConnection();
+    //    return await connection.QueryAsync<CourseProgress>(query, parameters);
+    //}
+
+    public async Task<IEnumerable<CourseProgressResponseDTO>> GetCourseProgressAsync(int? courseId = null, int? employeeId = null, string status = null, string monthYear = null, DateTime? startDate = null, DateTime? endDate = null)
     {
-        var query = "SELECT * FROM CourseProgress WHERE 1=1";
+        var query = @"
+        SELECT cp.*, c.*
+        FROM CourseProgress cp
+        JOIN Courses c ON cp.CourseID = c.CourseID
+        WHERE 1=1";
         var parameters = new DynamicParameters();
 
-        if (courseId.HasValue) query += " AND CourseID = @CourseID";
-        if (employeeId.HasValue) query += " AND EmployeeID = @EmployeeID";
-        if (!string.IsNullOrEmpty(status)) query += " AND Status = @Status";
-        if (!string.IsNullOrEmpty(monthYear)) query += " AND MonthCompleted = @MonthYear";
-        if (startDate.HasValue) query += " AND StartDate >= @StartDate";
-        if (endDate.HasValue) query += " AND EndDate <= @EndDate";
+        if (courseId.HasValue) query += " AND cp.CourseID = @CourseID";
+        if (employeeId.HasValue) query += " AND cp.EmployeeID = @EmployeeID";
+        if (!string.IsNullOrEmpty(status)) query += " AND cp.Status = @Status";
+        if (!string.IsNullOrEmpty(monthYear)) query += " AND cp.MonthCompleted = @MonthYear";
+        if (startDate.HasValue) query += " AND cp.StartDate >= @StartDate";
+        if (endDate.HasValue) query += " AND cp.EndDate <= @EndDate";
 
         parameters.AddDynamicParams(new { courseId, employeeId, status, monthYear, startDate, endDate });
 
         using var connection = _dbHelper.GetConnection();
-        return await connection.QueryAsync<CourseProgress>(query, parameters);
+        var result = await connection.QueryAsync<CourseProgress, Course, CourseProgressResponseDTO>(
+            query,
+            (courseProgress, course) =>
+            {
+                return new CourseProgressResponseDTO
+                {
+                    ProgressID = courseProgress.ProgressID,
+                    EmployeeID = courseProgress.EmployeeID,
+                    CourseID = courseProgress.CourseID,
+                    Status = courseProgress.Status,
+                    LastUpdated = courseProgress.LastUpdated,
+                    StartDate = courseProgress.StartDate,
+                    EndDate = courseProgress.EndDate,
+                    NewOrReUsed = courseProgress.NewOrReUsed,
+                    MonthCompleted = courseProgress.MonthCompleted,
+                    CourseDetails = course
+                };
+            },
+            parameters,
+            splitOn: "CourseID"
+        );
+
+        return result;
     }
 
     public async Task<bool> ResetCourseProgressAsync(int progressId)
