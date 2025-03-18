@@ -18,5 +18,6 @@ namespace LearningManagementSystem.Services.IServices
         Task<ResponseDTO> ResetCourseAsync(int progressId);
         Task<ResponseDTO> UpdateCourseProgressAsync(int progressId, CourseProgress courseProgress);
         Task<ResponseDTO> DeleteCourseProgressAsync(int progressId);
+        Task<int> GetEmployeeIdByProgressId(int progressId);
     }
 }

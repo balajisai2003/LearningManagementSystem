@@ -22,7 +22,7 @@ namespace LearningManagementSystem.Services
 
             var claims = new List<Claim>
                 {
-                    new Claim(JwtRegisteredClaimNames.Email, employee.Name), // Changed from employee.Email to employee.Name
+                    new Claim(JwtRegisteredClaimNames.Email, employee.Email), // Changed from employee.Email to employee.Name
                     new Claim(JwtRegisteredClaimNames.Sub, employee.EmployeeID.ToString()), // Changed from employee.Id to employee.EmployeeID
                     new Claim(JwtRegisteredClaimNames.Name, employee.Name), // Changed from employee.Email to employee.Name
                     new Claim(ClaimTypes.Role, role) // Changed from employee.Role to role

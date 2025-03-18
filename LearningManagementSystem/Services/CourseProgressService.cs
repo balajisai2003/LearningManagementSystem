@@ -182,5 +182,11 @@ namespace LearningManagementSystem.Services
                 Data = ex.Message
             };
         }
+
+        public async Task<int> GetEmployeeIdByProgressId(int progressId)
+        {
+            var progress = await _repository.GetCourseProgressByIdAsync(progressId);
+            return progress.EmployeeID;
+        }
     }
 }

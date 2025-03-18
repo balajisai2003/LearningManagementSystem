@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Models.DTOs;
+﻿using LearningManagementSystem.Models;
+using LearningManagementSystem.Models.DTOs;
 using LearningManagementSystem.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,7 @@ namespace LearningManagementSystem.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<ResponseDTO> RegisterEmployee([FromBody] EmpRequestDTO employee)
+        public async Task<ResponseDTO> RegisterEmployee([FromBody] Employee employee)
         {
             var response = await _employeeService.RegisterAsync(employee);
             return response;
@@ -57,7 +58,7 @@ namespace LearningManagementSystem.Controllers
         }
 
         [HttpPut("Update/{employeeId}")]
-        public async Task<ResponseDTO> UpdateEmployee([FromRoute] int employeeId, [FromBody] EmpRequestDTO employee)
+        public async Task<ResponseDTO> UpdateEmployee([FromRoute] int employeeId, [FromBody] Employee employee)
         {
             var response = await _employeeService.UpdateAsync(employeeId, employee);
             return response;

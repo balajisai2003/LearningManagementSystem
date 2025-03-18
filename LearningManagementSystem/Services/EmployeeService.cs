@@ -111,7 +111,7 @@ namespace LearningManagementSystem.Services
             }
         }
 
-        public async Task<ResponseDTO> RegisterAsync(EmpRequestDTO request)
+        public async Task<ResponseDTO> RegisterAsync(Employee request)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace LearningManagementSystem.Services
                 }
 
                 // Create a new Employee object
-                var newEmployee = new EmpRequestDTO
+                var newEmployee = new Employee
                 {
                     EmployeeID = request.EmployeeID,
                     Name = request.Name,
@@ -144,14 +144,15 @@ namespace LearningManagementSystem.Services
             }
         }
 
-        public async Task<ResponseDTO> UpdateAsync(int id, EmpRequestDTO request)
+        public async Task<ResponseDTO> UpdateAsync(int id, Employee request)
         {
             try
             {
                 if (await _employeeRepository.EmployeeExistsAsync(id))
                 {
-                    var employeeToUpdate = new EmpRequestDTO
+                    var employeeToUpdate = new Employee
                     {
+                        EmployeeID = id,
                         Name = request.Name,
                         Designation = request.Designation,
                         TechGroup = request.TechGroup,

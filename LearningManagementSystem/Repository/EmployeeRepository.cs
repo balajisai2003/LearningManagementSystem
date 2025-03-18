@@ -28,7 +28,7 @@ public class EmployeeRepository
         return await connection.QueryAsync<Employee>(query);
     }
 
-    public async Task<bool> AddEmployeeAsync(EmpRequestDTO employee)
+    public async Task<bool> AddEmployeeAsync(Employee employee)
     {
         const string query = "INSERT INTO Employees (EmployeeID, Name, Designation,TechGroup,Role, Email, Password) VALUES (@EmployeeID, @Name, @Designation, @TechGroup, @Role, @Email,@Password)";
         using var connection = _dbHelper.GetConnection();
@@ -51,20 +51,32 @@ public class EmployeeRepository
         return await connection.QueryFirstOrDefaultAsync<Employee>(query, new { Email = email });
     }
 
-    public async Task<bool> UpdateEmployeeAsync(EmpRequestDTO employee)
+    public async Task<bool> UpdateEmployeeAsync(Employee employee)
     {
         const string query = "UPDATE Employees SET Name = @Name, Designation = @Designation, TechGroup = @TechGroup, Role = @Role, Email = @Email, Password = @Password WHERE EmployeeID = @EmployeeID";
+        //using var connection = _dbHelper.GetConnection();
+        //var resp =  await connection.ExecuteAsync(query, new
+        //{
+        //    EmployeeID = employee.EmployeeID,
+        //    Name = employee.Name,
+        //    Designation = employee.Designation,
+        //    TechGroup = employee.TechGroup,
+        //    Role = employee.Role,
+        //    Email = employee.Email,
+        //    Password = employee.Password
+        //}) > 0;
+        var parameters = new DynamicParameters();
+        parameters.Add("@EmployeeID", employee.EmployeeID);
+        parameters.Add("@Name", employee.Name);
+        parameters.Add("@Designation", employee.Designation);
+        parameters.Add("@TechGroup", employee.TechGroup);
+        parameters.Add("@Role", employee.Role);
+        parameters.Add("@Email", employee.Email);
+        parameters.Add("@Password", employee.Password);
+
         using var connection = _dbHelper.GetConnection();
-        return await connection.ExecuteAsync(query, new
-        {
-            EmployeeID = employee.EmployeeID,
-            Name = employee.Name,
-            Designation = employee.Designation,
-            TechGroup = employee.TechGroup,
-            Role = employee.Role,
-            Email = employee.Email,
-            Password = employee.Password
-        }) > 0;
+        var resp = await connection.ExecuteAsync(query, parameters) > 0;
+        return resp;
     }
     public async Task<bool> DeleteEmployeeAsync(int employeeId)
     {
