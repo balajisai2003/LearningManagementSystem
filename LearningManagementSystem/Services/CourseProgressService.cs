@@ -17,7 +17,7 @@ namespace LearningManagementSystem.Services
         {
             _repository = new CourseProgressRepository(dbHelper);
         }
-
+         
         public async Task<ResponseDTO> AddCourseProgressAsync(CourseProgress courseProgress)
         {
             try
