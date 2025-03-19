@@ -6,6 +6,11 @@ using System.Data.SqlClient;
 
 namespace LearningManagementSystem.Utils
 {
+    public class ReportModel
+    {
+        public string Month { get; set; }
+        public int People { get; set; }
+    }
     public class ExcelReport
     {
         private DatabaseHelper _dbHelper;
@@ -47,7 +52,7 @@ namespace LearningManagementSystem.Utils
                     totalCoursesQquery = "SELECT count(*) FROM CourseProgress WHERE StartDate = @StartDate ";
                 else
                     totalCoursesQquery += "AND EndDate = @EndDate";
-                IEnumerable<ExcelReportModel> totalCourses = await connection.QueryAsync<ExcelReportModel>(totalCoursesQquery, new
+                int totalCourses = await connection.ExecuteAsync(totalCoursesQquery, new
                 {
                     StartDate = startdate,
                     EndDate = enddate
@@ -58,7 +63,7 @@ namespace LearningManagementSystem.Utils
                     completedCoursesQuery = "SELECT count(*) FROM CourseProgress WHERE StartDate = @StartDate AND Status = 'Completed'";
                 else
                     completedCoursesQuery += "AND EndDate = @EndDate";
-                IEnumerable<ExcelReportModel> completedCourses = await connection.QueryAsync<ExcelReportModel>(totalCoursesQquery, new
+                int completedCourses = await connection.ExecuteAsync(totalCoursesQquery, new
                 {
                     StartDate = startdate,
                     EndDate = enddate
@@ -69,12 +74,38 @@ namespace LearningManagementSystem.Utils
                     inprogressCoursesQuery = "SELECT count(*) FROM CourseProgress WHERE StartDate = @StartDate AND Status = 'In Progress'";
                 else
                     inprogressCoursesQuery += "AND EndDate = @EndDate";
-                IEnumerable<ExcelReportModel> inprogressCourses = await connection.QueryAsync<ExcelReportModel>(totalCoursesQquery, new
+                int inprogressCourses = await connection.ExecuteAsync(inprogressCoursesQuery, new
                 {
                     StartDate = startdate,
                     EndDate = enddate
                 });
 
+                string inProgressMonthQuery = "Select Max(DATENAME(MM,StartDate)) as Month, Count(1) as People from CourseProgress Where Status='In Progress' ";
+                if (enddate == null)
+                    inProgressMonthQuery += "AND StartDate = @StartDate ";
+                else
+                    inProgressMonthQuery += "AND EndDate = @EndDate";
+
+
+                inProgressMonthQuery += "Group by Month(StartDate)";
+                IEnumerable<ReportModel> inProgressMonth = await connection.QueryAsync<ReportModel>(inProgressMonthQuery, new
+                {
+                    StartDate = startdate,
+                    EndDate = enddate
+                });
+
+                string completedMonthQuery = "Select Max(DATENAME(MM,StartDate)) as Month, Count(1) as People from CourseProgress Where Status='Completed' ";
+                if (enddate == null)
+                    completedMonthQuery += "AND StartDate = @StartDate ";
+                else
+                    completedMonthQuery += "AND EndDate = @EndDate";
+
+                completedMonthQuery += "Group by Month(StartDate)";
+                IEnumerable<ReportModel> completedMonth = await connection.QueryAsync<ReportModel>(completedMonthQuery, new
+                {
+                    StartDate = startdate,
+                    EndDate = enddate
+                });
 
             }
             return new OkResult();
