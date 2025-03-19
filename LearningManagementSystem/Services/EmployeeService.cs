@@ -80,7 +80,7 @@ namespace LearningManagementSystem.Services
                             isSuccess = true,
                             message = "Login successful.",
                             Token =  _tokenGenerator.GenerateToken(employee, employee.Role),// Token generation logic should be implemented
-                            employee = loginResult
+                            employee = employee
                         };
                     }
                     return new LoginResponseDTO
