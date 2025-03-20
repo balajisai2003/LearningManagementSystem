@@ -148,6 +148,8 @@ namespace LearningManagementSystem.Controllers
         {
             // Assuming there's a method to get the employee ID from the progress ID
             int employeeId = await _requestService.GetEmployeeIdByRequestId(requestId);
+            if (employeeId == -1)
+                return false;
             return IsAuthorizedUser(employeeId);
         }
 

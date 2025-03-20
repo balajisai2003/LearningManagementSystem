@@ -229,13 +229,14 @@ namespace LearningManagementSystem.Services
                 var requestDetails = await _courseRequestRepository.GetRequestByIdAsync(requestId);
                 if (requestDetails == null)
                 {
-                    return null;
+                    return -1;
                 }
                 return requestDetails.EmployeeID;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                Console.WriteLine(ex.Message);
+                return -1;
             }
         }
 

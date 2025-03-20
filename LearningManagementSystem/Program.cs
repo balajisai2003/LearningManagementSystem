@@ -49,11 +49,13 @@ builder.Services.AddSingleton<DatabaseHelper>();
 builder.Services.AddScoped<CourseRequestFormRepository>();
 builder.Services.AddScoped<CourseProgressRepository>();
 builder.Services.AddScoped<EmployeeRepository>();
+builder.Services.AddScoped<CourseRepository>();
 
 
 builder.Services.AddScoped<ICourseRequestService, CourseRequestService>();
 builder.Services.AddScoped<IBrownBagService, BrownBagService>();
 builder.Services.AddScoped<ICourseProgressService, CourseProgressService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 
