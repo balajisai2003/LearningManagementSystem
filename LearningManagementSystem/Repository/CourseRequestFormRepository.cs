@@ -24,6 +24,32 @@ namespace LearningManagementSystem.Repository
             }
         }
 
+        public async Task<IEnumerable<CourseRequestForm>> GetBulkRequestsAsync()
+        {
+            using (var dbHelper = _dbHelper.GetConnection())
+            {
+                string query = "select RequestID,RequestEmpIds from CourseRequestForm";
+                List<int> BulkRequests = new List<int>();
+                var response = await dbHelper.QueryAsync<BulkResponseHelper>(query);
+                foreach (BulkResponseHelper responseHelper in response)
+                {
+                    List<string> empIds = responseHelper.RequestEmpIds.Split(',').ToList<string>();
+                    if(responseHelper.RequestEmpIds.Contains(','))
+                    {
+                        BulkRequests.Add(responseHelper.RequestID);
+                    }
+                }
+                if (BulkRequests.Count > 0)
+                {
+                    return await dbHelper.QueryAsync<CourseRequestForm>("SELECT * FROM CourseRequestForm WHERE RequestID IN @RequestID", new { RequestID = BulkRequests });
+                }
+                else
+                {
+                    return new List<CourseRequestForm>();
+                }
+            }
+        }
+
         public async Task<CourseRequestForm> GetRequestByIdAsync(int id)
         {
             using (var db = _dbHelper.GetConnection()) 
@@ -97,5 +123,11 @@ namespace LearningManagementSystem.Repository
         {
             return await UpdateRequestStatusAsync(requestId, "Rejected");
         }
+    }
+
+    public class BulkResponseHelper
+    {
+        public int RequestID { get; set; }
+        public string RequestEmpIds { get; set; }
     }
 }

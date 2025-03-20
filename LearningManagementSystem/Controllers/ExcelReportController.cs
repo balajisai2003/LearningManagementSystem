@@ -28,5 +28,11 @@ namespace LearningManagementSystem.Controllers
         {
             return await excelReport.GetReport();
         }
+
+        [HttpGet("analytics")]
+        public async Task<IActionResult> GetCoursesData(DateTime startdate, DateTime? enddate = null)
+        {
+            return await excelReport.CoursesData(startdate, enddate);
+        }
     }
 }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LearningManagementSystem.Utils;
 
 namespace LearningManagementSystem.Services
 {
@@ -15,12 +16,17 @@ namespace LearningManagementSystem.Services
         private readonly CourseRequestFormRepository _courseRequestRepository;
         private readonly CourseProgressRepository _courseProgressRepository;
         private readonly ResponseDTO _responseDTO;
+        private IConfiguration _configuration;
+        private MailService _mailService;
 
-        public CourseRequestService(CourseRequestFormRepository courseRequestRepository, CourseProgressRepository courseProgressRepository)
+        public CourseRequestService(CourseRequestFormRepository courseRequestRepository, CourseProgressRepository courseProgressRepository, IConfiguration configuration)
         {
             _courseRequestRepository = courseRequestRepository;
             _courseProgressRepository = courseProgressRepository;
             _responseDTO = new ResponseDTO();
+            _configuration = configuration;
+            _mailService = new MailService(configuration);
+
         }
 
         public async Task<ResponseDTO> ApproveRequestFormAsync(int requestId, string newOrReused)
@@ -63,6 +69,10 @@ namespace LearningManagementSystem.Services
             try
             {
                 bool created = await _courseRequestRepository.CreateRequestFormAsync(form);
+                if (created)
+                {
+                    //_mailService.SendMail(form.em)
+                }
                 return new ResponseDTO
                 {
                     Success = created,
@@ -126,6 +136,24 @@ namespace LearningManagementSystem.Services
                 {
                     Success = requestsList != null && requestsList.Any(),
                     Message = requestsList != null && requestsList.Any() ? "Successfully fetched all requests." : "No requests found!",
+                    Data = requestsList
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO { Success = false, Message = $"An error occurred: {ex.Message}" };
+            }
+        }
+
+        public async Task<ResponseDTO> GetBulkRequestsAsync()
+        {
+            try
+            {
+                var requestsList = await _courseRequestRepository.GetBulkRequestsAsync();
+                return new ResponseDTO
+                {
+                    Success = requestsList != null && requestsList.Any(),
+                    Message = requestsList != null && requestsList.Any() ? "Successfully fetched all bulk requests." : "No bulk requests found!",
                     Data = requestsList
                 };
             }

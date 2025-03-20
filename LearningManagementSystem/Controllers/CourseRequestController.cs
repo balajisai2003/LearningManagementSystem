@@ -71,6 +71,13 @@ namespace LearningManagementSystem.Controllers
             return response;
         }
 
+        [HttpGet("BulkRequests")]
+        public async Task<ResponseDTO> GetBulkRequestsAsync()
+        {
+            var response = await _requestService.GetBulkRequestsAsync();
+            return response;
+        }
+
         [HttpGet("Requests/Employee/{employeeId}")]
         public async Task<ResponseDTO> GetRequestsByEmployeeIdAsync([FromRoute] int employeeId)
         {

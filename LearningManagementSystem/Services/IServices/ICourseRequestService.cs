@@ -15,5 +15,6 @@ namespace LearningManagementSystem.Services.IServices
         Task<ResponseDTO> RejectRequestFormAsync(int requestId);
         Task<ResponseDTO> UpdateRequestFormAsync(int requestId, CourseRequestForm form);
         Task<ResponseDTO> GetRequestsByEmployeeIdAsync(int employeeId);
+        Task<ResponseDTO> GetBulkRequestsAsync();
     }
 }
