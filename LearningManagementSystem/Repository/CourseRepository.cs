@@ -39,45 +39,9 @@ namespace LearningManagementSystem.Repository
 
         public async Task<bool> AddCourse(Course course)
         {
-            /*
-             public string Title { get; set; }
-        public string ResourceLink { get; set; }
-        public string Description { get; set; }
-        public string Category { get; set; }  // "Technical", "Soft Skill", "Domain"
-        public string TrainingMode { get; set; }  // "Online", "Trainer", "Recordings"
-        public string TrainingSource { get; set; }  // "Youtube", "REpo"
-        public int? DurationInWeeks { get; set; }
-        public int? DurationInHours { get; set; }
-        public decimal? Price { get; set; }
-        public String Skills { get; set; }
-        public int Points { get; }
-            */
             using (var dbconn = _databasehelper.GetConnection())
             {
                 string query = "Insert into Courses values(@Title, @ResourceLink, @Description, @Category, @TrainingMode, @TrainingSource, @DurationInWeeks, @DurationInHours, @Price, @Skills, @Points)";
-                var rowsAffected = await dbconn.ExecuteAsync(query, new
-                {
-                    course.Title,
-                    course.ResourceLink,
-                    course.Description,
-                    course.Category,
-                    course.TrainingMode,
-                    course.TrainingSource,
-                    course.DurationInWeeks,
-                    course.DurationInHours,
-                    course.Price,
-                    course.Skills,
-                    course.Points
-                });
-                return rowsAffected > 0;
-            }
-        }
-
-        public async Task<bool> UpdateCourse(int courseId, Course course)
-        {
-            using (var dbconn = _databasehelper.GetConnection())
-            {
-                string query = "Update Courses set Title = @Title, ResourceLink = @ResourceLink, Description = @Description, Category = @Category, TrainingMode = @TrainingMode, TrainingSource = @TrainingSource, DurationInWeeks = @DurationInWeeks, DurationInHours = @DurationInHours, Price = @Price, Skills = @Skills, Points = @Points where CourseID = @CourseID";
                 var rowsAffected = await dbconn.ExecuteAsync(query, new
                 {
                     Title = course.Title,
@@ -91,7 +55,33 @@ namespace LearningManagementSystem.Repository
                     Price = course.Price,
                     Skills = course.Skills,
                     Points = course.Points,
-                    CourseID = courseId
+                });
+                return rowsAffected > 0;
+            }
+        }
+
+        public async Task<bool> UpdateCourse(int courseId, Course course)
+        {
+            using (var dbconn = _databasehelper.GetConnection())
+            {
+                Console.WriteLine($"Updating course with ID {courseId}, Points: {course.Points}"); // Debug statement
+
+
+                string query = "Update Courses set Title = @Title, ResourceLink = @ResourceLink, Description = @Description, Category = @Category, TrainingMode = @TrainingMode, TrainingSource = @TrainingSource, DurationInWeeks = @DurationInWeeks, DurationInHours = @DurationInHours, Price = @Price, Skills = @Skills, Points = @Points where CourseID = @CourseID";
+                var rowsAffected = await dbconn.ExecuteAsync(query, new
+                {
+                    CourseID = courseId,
+                    Title = course.Title,
+                    ResourceLink = course.ResourceLink,
+                    Description = course.Description,
+                    Category = course.Category,
+                    TrainingMode = course.TrainingMode,
+                    TrainingSource = course.TrainingSource,
+                    DurationInWeeks = course.DurationInWeeks,
+                    DurationInHours = course.DurationInHours,
+                    Price = course.Price,
+                    Skills = course.Skills,
+                    Points = course.Points,
                 });
                 return rowsAffected>0;
             }

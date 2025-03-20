@@ -13,7 +13,7 @@
         public int? DurationInHours { get; set; }
         public decimal? Price { get; set; }
         public String Skills { get; set; }
-        public int Points { get; }
+        public int Points { get; set;  }
 
     }
 
