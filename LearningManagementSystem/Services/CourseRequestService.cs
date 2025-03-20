@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
 using LearningManagementSystem.Utils;
 
 namespace LearningManagementSystem.Services
@@ -218,6 +219,36 @@ namespace LearningManagementSystem.Services
             catch (Exception ex)
             {
                 return new ResponseDTO { Success = false, Message = $"An error occurred: {ex.Message}" };
+            }
+        }
+
+        public async Task<int> GetEmployeeIdByRequestId(int requestId)
+        {
+            try
+            {
+                var requestDetails = await _courseRequestRepository.GetRequestByIdAsync(requestId);
+                if (requestDetails == null)
+                {
+                    return null;
+                }
+                return requestDetails.EmployeeID;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> IsRequestApprovedAsync(int requestId)
+        {
+            try
+            {
+                var requestDetails = await _courseRequestRepository.GetRequestByIdAsync(requestId);
+                return requestDetails.Status == "Approved";
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }
