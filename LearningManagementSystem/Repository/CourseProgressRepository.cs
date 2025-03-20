@@ -12,10 +12,12 @@ using System.Threading.Tasks;
 public class CourseProgressRepository
 {
     private readonly DatabaseHelper _dbHelper;
+    private readonly EmployeeRepository employeeRepository;
 
     public CourseProgressRepository(DatabaseHelper dbHelper)
     {
         _dbHelper = dbHelper;
+        employeeRepository = new EmployeeRepository(dbHelper);
     }
 
     public async Task<bool> AddCourseProgressAsync(int courseId, int employeeId, string newOrReused)
@@ -163,7 +165,8 @@ public class CourseProgressRepository
                     EndDate = courseProgress.EndDate,
                     NewOrReUsed = courseProgress.NewOrReUsed,
                     MonthCompleted = courseProgress.MonthCompleted,
-                    CourseDetails = course
+                    CourseDetails = course,
+                    EmployeeDetails =  employeeRepository.GetEmployeeByIDAsync(courseProgress.EmployeeID).Result
                 };
             },
             parameters,
