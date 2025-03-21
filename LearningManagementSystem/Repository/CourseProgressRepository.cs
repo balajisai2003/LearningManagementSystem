@@ -165,6 +165,7 @@ public class CourseProgressRepository
                     EndDate = courseProgress.EndDate,
                     NewOrReUsed = courseProgress.NewOrReUsed,
                     MonthCompleted = courseProgress.MonthCompleted,
+                    RequestorEmployeeId = courseProgress.RequestorEmployeeId,
                     CourseDetails = course,
                     EmployeeDetails =  employeeRepository.GetEmployeeByIDAsync(courseProgress.EmployeeID).Result
                 };

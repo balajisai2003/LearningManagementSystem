@@ -5,6 +5,7 @@
         public int ProgressID { get; set; }
         public int EmployeeID { get; set; }
         public Employee EmployeeDetails { get; set; }
+        public int RequestorEmployeeId { get; set; }
         public int CourseID { get; set; }
         public string Status { get; set; }
         public DateTime LastUpdated { get; set; }
