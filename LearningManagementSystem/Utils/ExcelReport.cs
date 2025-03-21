@@ -47,9 +47,9 @@ namespace LearningManagementSystem.Utils
                 var parameters = new DynamicParameters();
                 parameters.Add("@StartDate", startdate);
                 parameters.Add("@EndDate", enddate);
-                string totalCoursesQquery = "SELECT count(*) FROM CourseProgress WHERE StartDate = @StartDate ";
+                string totalCoursesQquery = "SELECT count(*) FROM CourseProgress WHERE StartDate >= @StartDate ";
                 if (enddate != null)
-                    totalCoursesQquery += "AND EndDate = @EndDate";
+                    totalCoursesQquery += "AND EndDate <= @EndDate";
 
                 int totalCourses = await connection.ExecuteScalarAsync<int>(totalCoursesQquery, new
                 {
