@@ -7,6 +7,8 @@
         public int ParticipantID { get; set; }
         public string ParticipantName { get; set; }
         public string Designation { get; set; }
+        public string Cadre { get; set; }
+        public string Location { get; set; }
         public string TechGroup { get; set; }
         public string Category { get; set; }
         public string TrainingMode { get; set; }
