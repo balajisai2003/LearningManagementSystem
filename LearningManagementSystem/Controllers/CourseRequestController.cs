@@ -137,9 +137,16 @@ namespace LearningManagementSystem.Controllers
             return response;
         }
 
+        //private bool IsAuthorizedUser(int employeeId)
+        //{
+        //    var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        //    var role = User.FindFirst(ClaimTypes.Role)?.Value;
+        //    return userId != null && (userId == employeeId.ToString() || role == "Admin");
+        //}
+
         private bool IsAuthorizedUser(int employeeId)
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
             return userId != null && (userId == employeeId.ToString() || role == "Admin");
         }
