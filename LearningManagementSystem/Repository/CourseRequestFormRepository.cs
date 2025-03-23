@@ -77,7 +77,7 @@ namespace LearningManagementSystem.Repository
             OUTPUT INSERTED.RequestID
             VALUES (@EmployeeID, @CourseID, @RequestEmpIDs, @RequestDate, @Status, @Comments, @ImageLink)";
 
-                int requestId = await db.ExecuteAsync(sql, form);
+                int requestId = await db.ExecuteScalarAsync<int>(sql, form);
                 if (requestId > 0)
                 {
                     return requestId;
