@@ -69,9 +69,11 @@ namespace LearningManagementSystem.Services
         {
             try
             {
-                bool created = await _courseRequestRepository.CreateRequestFormAsync(form);
+                var requestId = await _courseRequestRepository.CreateRequestFormAsync(form);
+                bool created = requestId!=-1 ? true : false;
                 if (created)
                 {
+                    form.RequestID = requestId;
                     //_mailService.SendMail(form.em)
                 }
                 return new ResponseDTO

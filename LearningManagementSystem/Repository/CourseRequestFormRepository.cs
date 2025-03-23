@@ -68,15 +68,21 @@ namespace LearningManagementSystem.Repository
             }
         }
 
-        public async Task<bool> CreateRequestFormAsync(CourseRequestForm form)
+        public async Task<int> CreateRequestFormAsync(CourseRequestForm form)
         {
             using (var db = _dbHelper.GetConnection())
             {
-                var sql = @"INSERT INTO CourseRequestForm (EmployeeID, CourseID, RequestEmpIDs, RequestDate, Status, Comments, ImageLink) 
-                            VALUES (@EmployeeID, @CourseID, @RequestEmpIDs, @RequestDate, @Status, @Comments, @ImageLink)";
+                var sql = @"
+            INSERT INTO CourseRequestForm (EmployeeID, CourseID, RequestEmpIDs, RequestDate, Status, Comments, ImageLink) 
+            OUTPUT INSERTED.RequestID
+            VALUES (@EmployeeID, @CourseID, @RequestEmpIDs, @RequestDate, @Status, @Comments, @ImageLink)";
 
-                int affectedRows = await db.ExecuteAsync(sql, form);
-                return affectedRows > 0;
+                int requestId = await db.ExecuteAsync(sql, form);
+                if (requestId > 0)
+                {
+                    return requestId;
+                }
+                return -1;
             }
         }
 
