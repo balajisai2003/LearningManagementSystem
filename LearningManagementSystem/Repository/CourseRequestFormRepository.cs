@@ -16,13 +16,45 @@ namespace LearningManagementSystem.Repository
             _dbHelper = dbHelper;
         }
 
-        public async Task<IEnumerable<CourseRequestForm>> GetAllRequestsAsync()
+        //public async Task<IEnumerable<CourseRequestForm>> GetAllRequestsAsync()
+        //{
+        //    using (var db = _dbHelper.GetConnection())
+        //    {
+        //        return await db.QueryAsync<CourseRequestForm>("SELECT * FROM CourseRequestForm");
+        //    }
+        //}
+
+        public async Task<IEnumerable<CourseRequestFormWithDetails>> GetAllRequestsAsync()
         {
             using (var db = _dbHelper.GetConnection())
             {
-                return await db.QueryAsync<CourseRequestForm>("SELECT * FROM CourseRequestForm");
+                var sql = @"
+            SELECT crf.*, c.*
+            FROM CourseRequestForm crf
+            JOIN Courses c ON crf.CourseID = c.CourseID";
+                var result = await db.QueryAsync<CourseRequestForm, Course, CourseRequestFormWithDetails>(
+                    sql,
+                    (courseRequestForm, course) =>
+                    {
+                        return new CourseRequestFormWithDetails
+                        {
+                            RequestID = courseRequestForm.RequestID,
+                            EmployeeID = courseRequestForm.EmployeeID,
+                            CourseID = courseRequestForm.CourseID,
+                            RequestEmpIDs = courseRequestForm.RequestEmpIDs,
+                            RequestDate = courseRequestForm.RequestDate,
+                            Status = courseRequestForm.Status,
+                            Comments = courseRequestForm.Comments,
+                            ImageLink = courseRequestForm.ImageLink,
+                            CourseDetails = course
+                        };
+                    },
+                    splitOn: "CourseID"
+                );
+                return result;
             }
         }
+
 
         public async Task<IEnumerable<CourseRequestForm>> GetBulkRequestsAsync()
         {
@@ -34,7 +66,7 @@ namespace LearningManagementSystem.Repository
                 foreach (BulkResponseHelper responseHelper in response)
                 {
                     List<string> empIds = responseHelper.RequestEmpIds.Split(',').ToList<string>();
-                    if(responseHelper.RequestEmpIds.Contains(','))
+                    if (responseHelper.RequestEmpIds.Contains(','))
                     {
                         BulkRequests.Add(responseHelper.RequestID);
                     }
@@ -50,14 +82,47 @@ namespace LearningManagementSystem.Repository
             }
         }
 
-        public async Task<CourseRequestForm> GetRequestByIdAsync(int id)
+        //public async Task<CourseRequestForm> GetRequestByIdAsync(int id)
+        //{
+        //    using (var db = _dbHelper.GetConnection())
+        //    {
+        //        var sql = "SELECT * FROM CourseRequestForm WHERE RequestID = @RequestID";
+        //        return await db.QueryFirstOrDefaultAsync<CourseRequestForm>(sql, new { RequestID = id });
+        //    }
+        //}
+        public async Task<CourseRequestFormWithDetails> GetRequestByIdAsync(int id)
         {
-            using (var db = _dbHelper.GetConnection()) 
+            using (var db = _dbHelper.GetConnection())
             {
-                var sql = "SELECT * FROM CourseRequestForm WHERE RequestID = @RequestID";
-                return await db.QueryFirstOrDefaultAsync<CourseRequestForm>(sql, new { RequestID = id });
+                var sql = @"
+            SELECT crf.*, c.*
+            FROM CourseRequestForm crf
+            JOIN Courses c ON crf.CourseID = c.CourseID
+            WHERE crf.RequestID = @RequestID";
+                var result = await db.QueryAsync<CourseRequestForm, Course, CourseRequestFormWithDetails>(
+                    sql,
+                    (courseRequestForm, course) =>
+                    {
+                        return new CourseRequestFormWithDetails
+                        {
+                            RequestID = courseRequestForm.RequestID,
+                            EmployeeID = courseRequestForm.EmployeeID,
+                            CourseID = courseRequestForm.CourseID,
+                            RequestEmpIDs = courseRequestForm.RequestEmpIDs,
+                            RequestDate = courseRequestForm.RequestDate,
+                            Status = courseRequestForm.Status,
+                            Comments = courseRequestForm.Comments,
+                            ImageLink = courseRequestForm.ImageLink,
+                            CourseDetails = course
+                        };
+                    },
+                    new { RequestID = id },
+                    splitOn: "CourseID"
+                );
+                return result.FirstOrDefault();
             }
         }
+
 
         public async Task<IEnumerable<CourseRequestForm>> GetRequestsByEmployeeIdAsync(int employeeId)
         {
@@ -136,4 +201,18 @@ namespace LearningManagementSystem.Repository
         public int RequestID { get; set; }
         public string RequestEmpIds { get; set; }
     }
+
+    public class CourseRequestFormWithDetails
+    {
+        public int RequestID { get; set; }
+        public int EmployeeID { get; set; }
+        public int CourseID { get; set; }
+        public string RequestEmpIDs { get; set; }
+        public DateTime RequestDate { get; set; }
+        public string Status { get; set; }
+        public string Comments { get; set; }
+        public string ImageLink { get; set; }
+        public Course CourseDetails { get; set; }
+    }
+
 }
