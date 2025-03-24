@@ -1,6 +1,7 @@
 ﻿using LearningManagementSystem.Models;
 using LearningManagementSystem.Models.DTOs;
 using LearningManagementSystem.Services.IServices;
+using LearningManagementSystem.Utils;
 
 namespace LearningManagementSystem.Services
 {
@@ -117,7 +118,7 @@ namespace LearningManagementSystem.Services
             {
                 // Check if employee with the same email already exists
                 var employee = await _employeeRepository.GetEmployeeByEmail(request.Email);
-                if (employee!= null)
+                if (employee != null)
                 {
                     return GenerateResponse(false, null, "Employee with the same email already exists.");
                 }
@@ -127,11 +128,13 @@ namespace LearningManagementSystem.Services
                 {
                     EmployeeID = request.EmployeeID,
                     Name = request.Name,
+                    Cadre = request.Cadre,
+                    Location = request.Location,
                     Designation = request.Designation,
                     TechGroup = request.TechGroup,
                     Role = request.Role,
                     Email = request.Email,
-                    Password = request.Password // Password should be hashed before storing
+                    Password = Hasher.PasswordHasher(request.Password) // Password should be hashed before storing
                 };
 
                 // Add the new employee to the repository
@@ -155,10 +158,12 @@ namespace LearningManagementSystem.Services
                         EmployeeID = id,
                         Name = request.Name,
                         Designation = request.Designation,
+                        Cadre = request.Cadre,
+                        Location = request.Location,
                         TechGroup = request.TechGroup,
                         Role = request.Role,
                         Email = request.Email,
-                        Password = request.Password // Password should be hashed before storing
+                        Password = Hasher.PasswordHasher(request.Password) // Password should be hashed before storing
                     };
 
                     bool isUpdated = await _employeeRepository.UpdateEmployeeAsync(employeeToUpdate);

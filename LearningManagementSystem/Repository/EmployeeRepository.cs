@@ -4,6 +4,7 @@ using Dapper;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Models.DTOs;
+using LearningManagementSystem.Utils;
 
 public class EmployeeRepository
 {
@@ -94,6 +95,7 @@ public class EmployeeRepository
 
     public async Task<bool> LoginAsync(LoginRequestDTO loginRequest)
     {
+        loginRequest.Password = Hasher.PasswordHasher(loginRequest.Password);
          if(await GetEmployeeByEmail(loginRequest.Email)!=null)
         {
             const string query = "SELECT COUNT(1) FROM Employees WHERE Email = @Email AND Password = @Password";

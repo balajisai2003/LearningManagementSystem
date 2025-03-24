@@ -124,12 +124,44 @@ namespace LearningManagementSystem.Repository
         }
 
 
-        public async Task<IEnumerable<CourseRequestForm>> GetRequestsByEmployeeIdAsync(int employeeId)
+        //public async Task<IEnumerable<CourseRequestForm>> GetRequestsByEmployeeIdAsync(int employeeId)
+        //{
+        //    using (var db = _dbHelper.GetConnection())
+        //    {
+        //        var sql = "SELECT * FROM CourseRequestForm WHERE EmployeeID = @EmployeeID";
+        //        return await db.QueryAsync<CourseRequestForm>(sql, new { EmployeeID = employeeId });
+        //    }
+        //}
+        public async Task<IEnumerable<CourseRequestFormWithDetails>> GetRequestsByEmployeeIdAsync(int employeeId)
         {
             using (var db = _dbHelper.GetConnection())
             {
-                var sql = "SELECT * FROM CourseRequestForm WHERE EmployeeID = @EmployeeID";
-                return await db.QueryAsync<CourseRequestForm>(sql, new { EmployeeID = employeeId });
+                var sql = @"
+            SELECT crf.*, c.*
+            FROM CourseRequestForm crf
+            JOIN Courses c ON crf.CourseID = c.CourseID
+            WHERE crf.EmployeeID = @EmployeeID";
+                var result = await db.QueryAsync<CourseRequestForm, Course, CourseRequestFormWithDetails>(
+                    sql,
+                    (courseRequestForm, course) =>
+                    {
+                        return new CourseRequestFormWithDetails
+                        {
+                            RequestID = courseRequestForm.RequestID,
+                            EmployeeID = courseRequestForm.EmployeeID,
+                            CourseID = courseRequestForm.CourseID,
+                            RequestEmpIDs = courseRequestForm.RequestEmpIDs,
+                            RequestDate = courseRequestForm.RequestDate,
+                            Status = courseRequestForm.Status,
+                            Comments = courseRequestForm.Comments,
+                            ImageLink = courseRequestForm.ImageLink,
+                            CourseDetails = course
+                        };
+                    },
+                    new { EmployeeID = employeeId },
+                    splitOn: "CourseID"
+                );
+                return result;
             }
         }
 
