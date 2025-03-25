@@ -5,8 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAppDispatch, useAppSelector } from '@/redux/app/hooks'
 import { addCourses, Course, setEmpDetails } from '@/redux/features/employeeDataSlice'
 import axiosInstance from '@/lib/axiosInstance'
-import CoursesView from '@/components/employee-components/CoursesView'
-import CourseCard from '@/components/CourseCard'
+import CoursesView, { CourseProgressCard } from '@/components/employee-components/CoursesView'
 
 import RequestedCoursesView from '@/components/employee-components/RequestedCoursesView'
 import CardSkimmer from '@/components/CardSkimmer'
@@ -55,7 +54,7 @@ const Page: FC = () => {
         // Filter by category
         if (selectedCategory === "Mandatory Compliance") {
             filteredCourses = reduxSavedCourses.filter(course =>
-                course.courseDetails.category === "Mandatory Compliance"
+                course.courseDetails.category === "Mandatory trainings"
             )
         }
         return filteredCourses
@@ -122,7 +121,10 @@ const Page: FC = () => {
                                     ({coursesToDisplay.length})
                                 </span>
                             </h2>
-                            {loading ? <CardSkimmer /> : coursesToDisplay.length > 0 && coursesToDisplay.map((course, key) => (<CourseCard key={key} video={course} handleCourseComplete={() => { }} loadingProgressId={key} />))}
+                            <div className='grid grid-cols-2 gap-4'>
+                                {loading ? <CardSkimmer /> : coursesToDisplay.length > 0 && coursesToDisplay.map((course, key) => (<CourseProgressCard key={key} data={course} />))}
+
+                            </div>
                         </>
                     )
                 }
