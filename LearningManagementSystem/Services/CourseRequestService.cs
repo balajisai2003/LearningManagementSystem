@@ -49,7 +49,7 @@ namespace LearningManagementSystem.Services
                     ? requestDetails.RequestEmpIDs.Split(',').Select(int.Parse).ToList()
                     : new List<int>();
 
-                var progressResult = await _courseProgressRepository.AddMultipleCourseProgressAsync(requestDetails.CourseID, requestEmpIds, newOrReused);
+                var progressResult = await _courseProgressRepository.AddMultipleCourseProgressAsync(requestDetails.CourseID, requestEmpIds, newOrReused, requestDetails.EmployeeID); // need to add the employeeId parameter here so that the requestorEmployeeId will be passed correctly and updated in db as well -> we currently are not passing it..gotta fix it goddamn it!!
                 bool success = await _courseRequestRepository.ApproveRequestAsync(requestId) || progressResult.Success;
 
                 return new ResponseDTO

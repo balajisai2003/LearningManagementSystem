@@ -22,7 +22,7 @@ namespace LearningManagementSystem.Services
         {
             try
             {
-                bool isAdded = await _repository.AddCourseProgressAsync(courseProgress.CourseID, courseProgress.EmployeeID, courseProgress.NewOrReUsed);
+                bool isAdded = await _repository.AddCourseProgressAsync(courseProgress.CourseID, courseProgress.EmployeeID, courseProgress.NewOrReUsed, courseProgress.RequestorEmployeeId);
                 return GenerateResponse(isAdded, "Course progress added successfully.", "Failed to add course progress.");
             }
             catch (Exception ex)

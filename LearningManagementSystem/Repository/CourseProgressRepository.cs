@@ -20,10 +20,10 @@ public class CourseProgressRepository
         employeeRepository = new EmployeeRepository(dbHelper);
     }
 
-    public async Task<bool> AddCourseProgressAsync(int courseId, int employeeId, string newOrReused)
+    public async Task<bool> AddCourseProgressAsync(int courseId, int employeeId, string newOrReused, int requestorEmployeeId)
     {
-        const string query = @"INSERT INTO CourseProgress (CourseID, EmployeeID, Status, NewOrReused) 
-                              VALUES (@CourseID, @EmployeeID, @Status, @NewOrReused)";
+        const string query = @"INSERT INTO CourseProgress (CourseID, EmployeeID, Status, NewOrReused,RequestorEmployeeID) 
+                              VALUES (@CourseID, @EmployeeID, @Status, @NewOrReused, @RequestorEmployeeID)";
 
         using var connection = _dbHelper.GetConnection();
         int rowsAffected = await connection.ExecuteAsync(query, new
@@ -31,17 +31,18 @@ public class CourseProgressRepository
             CourseID = courseId,
             EmployeeID = employeeId,
             Status = "Not Started",
-            NewOrReused = newOrReused
+            NewOrReused = newOrReused,
+            requestorEmployeeId = requestorEmployeeId
         });
         return rowsAffected > 0;
     }
 
-    public async Task<AddMultipleCourseProgressResult> AddMultipleCourseProgressAsync(int courseId, List<int> employeeIds, string newOrReused)
+    public async Task<AddMultipleCourseProgressResult> AddMultipleCourseProgressAsync(int courseId, List<int> employeeIds, string newOrReused, int requestorEmployeeId)
     {
         var result = new AddMultipleCourseProgressResult();
         foreach (var employeeId in employeeIds)
         {
-            if (await AddCourseProgressAsync(courseId, employeeId, newOrReused))
+            if (await AddCourseProgressAsync(courseId, employeeId, newOrReused,requestorEmployeeId))
                 result.Added.Add(employeeId);
             else
                 result.Failed.Add(employeeId);

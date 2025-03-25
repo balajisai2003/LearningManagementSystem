@@ -7,6 +7,7 @@ using LearningManagementSystem.Services;
 using LearningManagementSystem.Services.IServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +44,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 
-
+var keyVaultName = builder.Configuration["KeyVaultName"];
+var keyVaultUri = new Uri($"https://{keyVaultName}.vault.azure.net/");
+builder.Configuration.AddAzureKeyVault(keyVaultUri, new DefaultAzureCredential());
 
 builder.Services.AddSingleton<DatabaseHelper>();
 builder.Services.AddScoped<CourseRequestFormRepository>();
