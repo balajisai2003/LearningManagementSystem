@@ -30,6 +30,8 @@ type FormData = {
     techGroup: string;
     requestType: string;
     brownBagDate?: Date;
+    brownBagTopicType:string;
+    brownBagSpeakerWriteUp: string;
     brownBagPresentationTopic: string;
     brownBagDescription: string;
     trainingMode: string;
@@ -65,9 +67,11 @@ const TrainingRequestForm = () => {
         employeeRole: '',
         techGroup: '',
         requestType: '',
-        brownBagDate: undefined,
+        brownBagDate:new Date(), 
+        brownBagTopicType:'',
+        brownBagSpeakerWriteUp:'',
         brownBagPresentationTopic: '',
-        brownBagDescription: '',
+        brownBagDescription:'',
         trainingMode: '',
         trainingType: '',
         trainingSource: '',
@@ -142,7 +146,7 @@ const TrainingRequestForm = () => {
 
 
     const handleChange = (field: keyof FormData, value: any) => {
-        if (field === "trainingTopic") {
+        if (field === "trainingTopic" || field === "brownBagPresentationTopic") {
             setFormData(prev => ({
                 ...prev,
                 [field]: value,
@@ -172,12 +176,14 @@ const TrainingRequestForm = () => {
             trainingTopic: formData.trainingTopic?.value
         };
 
-        if (payload.requestType === "training") {
-            //send training request
-            try {
-                setLoading(true)
+        try {
+            setLoading(true);
+    
+            if (payload.requestType === "training") {
+                // Handle training request submission
                 if (payload.participants.length < 1) {
-                    const data = await axiosInstance.post('https://learningmanagementsystemhw-azc0a4fmgre6cabn.westus3-01.azurewebsites.net/api/CoursesRequest/create', {
+                    // Single participant request
+                    await axiosInstance.post('https://learningmanagementsystemhw-azc0a4fmgre6cabn.westus3-01.azurewebsites.net/api/CoursesRequest/create', {
                         employeeID: formData.employeeId,
                         courseID: formData.trainingTopic?.value,
                         requestEmpIDs: formData.employeeId.toString(),
@@ -186,9 +192,8 @@ const TrainingRequestForm = () => {
                         comments: formData.otherTrainingTopic || "",
                         imageLink: formData.justificationFile ? URL.createObjectURL(formData.justificationFile) : ""
                     });
-                    console.log(data)
-                }
-                else {
+                } else {
+                    // Bulk request with multiple participants
                     await axiosInstance.post('https://learningmanagementsystemhw-azc0a4fmgre6cabn.westus3-01.azurewebsites.net/api/CoursesRequest/create', {
                         employeeID: formData.employeeId,
                         courseID: formData.trainingTopic?.value,
@@ -199,18 +204,34 @@ const TrainingRequestForm = () => {
                         imageLink: formData.justificationFile ? URL.createObjectURL(formData.justificationFile) : ""
                     });
                 }
-
+    
                 toast.success("Training request submitted successfully");
-
-            } catch (err) {
-                console.log(err)
-                toast.error("Error submitting training request");
+    
+            } else if (payload.requestType === "brownBag") {
+                // Handle brown bag session request submission
+                const brownBagPayload = {
+                    employeeID: formData.employeeId,
+                    employeeName: formData.name,
+                    topicType: formData.brownBagTopicType,
+                    topicName: formData.brownBagPresentationTopic,
+                    agenda: formData.brownBagDescription,
+                    speakerDescription: formData.brownBagSpeakerWriteUp,
+                    requestDate: new Date().toISOString(),
+                };
+    
+                // Send Brown Bag session request
+                await axiosInstance.post('https://learningmanagementsystemhw-azc0a4fmgre6cabn.westus3-01.azurewebsites.net/api/BrownBagRequest/create', brownBagPayload);
+    
+                toast.success("Brown Bag session request submitted successfully");
             }
-            finally {
-                setLoading(false)
-            }
+    
+        } catch (err) {
+            console.error("Error submitting request:", err);
+            toast.error("Error submitting request");
+        } finally {
+            setLoading(false);
         }
-
+    
         clearForm();
     };
 
@@ -218,9 +239,11 @@ const TrainingRequestForm = () => {
         setFormData({
             ...formData,
             requestType: '',
-            brownBagDate: undefined,
+            brownBagDate:undefined, 
+            brownBagTopicType:'',
+            brownBagSpeakerWriteUp:'',
             brownBagPresentationTopic: '',
-            brownBagDescription: '',
+            brownBagDescription:'',
             trainingMode: '',
             trainingType: '',
             trainingSource: '',
@@ -416,42 +439,69 @@ const TrainingRequestForm = () => {
                 )}
 
                 {/* Brown Bag Session Details */}
-                {formData.requestType === 'brownBag' && (
-                    <Card>
-                        <CardHeader className="bg-indigo-50">
-                            <CardTitle className="text-primary">Brown Bag Session Details</CardTitle>
-                        </CardHeader>
+                     {formData.requestType === 'brownBag' && (
+                       <Card>
+                         <CardHeader className="bg-indigo-50">
+                         <CardTitle className="text-primary">Brown Bag Session Details</CardTitle>
+                         </CardHeader>
                         <CardContent className="space-y-6 mt-4">
+                            {/* Topic Type */}
                             <div>
-                                <Label>Presentation Topic *</Label>
+                                <Label>Topic Type *</Label>
                                 <Input
-                                    placeholder="Enter Presentation Topic"
+                                    value={formData.brownBagTopicType}
+                                    onChange={e => handleChange('brownBagTopicType', e.target.value)}
+                                />
+                                
+                            </div>
+
+                            {/* Topic Name */}
+                            <div>
+                                <Label>Topic Name *</Label>
+                                <Input
+                                    placeholder="Enter Topic Name"
                                     value={formData.brownBagPresentationTopic}
                                     onChange={e => handleChange('brownBagPresentationTopic', e.target.value)}
                                 />
                             </div>
 
+                            {/* Agenda */}
                             <div>
-                                <Label>Description *</Label>
+                                <Label>Agenda *</Label>
                                 <Textarea
-                                    placeholder="Provide a brief description of your presentation"
+                                    placeholder="Provide the agenda for the session in 4 - 5 lines"
                                     value={formData.brownBagDescription}
                                     onChange={e => handleChange('brownBagDescription', e.target.value)}
                                 />
                             </div>
 
+                            {/* Speaker Write-up */}
+                            <div>
+                                <Label>Speaker Write-up *</Label>
+                                <Textarea
+                                    placeholder="Your Write Up in 4 - 5 lines"
+                                    value={formData.brownBagSpeakerWriteUp}
+                                    onChange={e => handleChange('brownBagSpeakerWriteUp', e.target.value)}
+                                />
+                            </div>
+
+                            {/* Request Date (Fridays Only) */}
                             <div>
                                 <Label>Session Date (Fridays Only)</Label>
                                 <Calendar
                                     mode="single"
                                     selected={formData.brownBagDate}
                                     onSelect={d => handleChange('brownBagDate', d)}
-                                    disabled={date => !isFriday(date)}
+                                    disabled={date=>{
+                                        const isFutureOrToday = date >= new Date(new Date().setHours(0, 0, 0, 0));
+                                         return !isFriday(date) || !isFutureOrToday;
+                                    }}
                                 />
                             </div>
                         </CardContent>
                     </Card>
                 )}
+
 
                 {/* Submit / Cancel Buttons */}
                 <div className="flex justify-end gap-4">
