@@ -112,20 +112,20 @@ const ReportsAnalytics: FC = () => {
     // Filtered Data
     const filteredData = useMemo(() => {
         return progressData.filter((row) => {
-            const lowerGlobal = globalSearch.toLowerCase();
-            const lowerEmployeeName = employeeNameFilter.toLowerCase();
-            const lowerDesignation = designationFilter.toLowerCase();
-            const lowerLocation = locationFilter.toLowerCase();
+            const lowerGlobal = globalSearch?.toLowerCase();
+            const lowerEmployeeName = employeeNameFilter?.toLowerCase();
+            const lowerDesignation = designationFilter?.toLowerCase();
+            const lowerLocation = locationFilter?.toLowerCase();
 
             const matchesGlobal =
                 row.employeeID.toString().includes(lowerGlobal) ||
-                row.courseDetails.title.toLowerCase().includes(lowerGlobal) ||
-                row.employeeDetails.name.toLowerCase().includes(lowerGlobal) ||
-                row.employeeDetails.email.toLowerCase().includes(lowerGlobal);
+                row.courseDetails.title?.toLowerCase().includes(lowerGlobal) ||
+                row.employeeDetails.name?.toLowerCase().includes(lowerGlobal) ||
+                row.employeeDetails.email?.toLowerCase().includes(lowerGlobal);
 
-            const matchesEmployeeName = row.employeeDetails.name.toLowerCase().includes(lowerEmployeeName);
-            const matchesDesignation = row.employeeDetails.designation.toLowerCase().includes(lowerDesignation);
-            const matchesLocation = row.employeeDetails.location.toLowerCase().includes(lowerLocation);
+            const matchesEmployeeName = row.employeeDetails.name?.toLowerCase().includes(lowerEmployeeName);
+            const matchesDesignation = row.employeeDetails.designation?.toLowerCase().includes(lowerDesignation);
+            const matchesLocation = row.employeeDetails.location?.toLowerCase().includes(lowerLocation);
             const matchesStatus = statusFilter === "All" || row.status === statusFilter;
             const matchesCourse = courseFilter === "All" || row.courseDetails.title === courseFilter;
             const matchesMonth = monthFilter === "All" || row.monthCompleted === monthFilter;
