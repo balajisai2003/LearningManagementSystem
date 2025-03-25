@@ -11,12 +11,13 @@ import { Calendar } from "@/components/ui/calendar";
 import dynamic from 'next/dynamic';
 import { Props as SelectProps } from 'react-select';
 import axiosInstance from '@/lib/axiosInstance';
-import { groupByMultipleKeys } from '@/lib/groupByMultipleKeys';
 import Loader from '@/components/Loader';
 import { useSessionStorage } from '@/hooks/useSessionStorage';
 import { Status } from '@/types/Status';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
+import { TrainingMode } from '@/lib/trainingMode';
+import { trainingGroup } from '@/lib/trainingGroup';
 
 const ReactSelect = dynamic<SelectProps>(() => import('react-select'), { ssr: false });
 
@@ -30,7 +31,7 @@ type FormData = {
     techGroup: string;
     requestType: string;
     brownBagDate?: Date;
-    brownBagTopicType:string;
+    brownBagTopicType: string;
     brownBagSpeakerWriteUp: string;
     brownBagPresentationTopic: string;
     brownBagDescription: string;
@@ -67,11 +68,11 @@ const TrainingRequestForm = () => {
         employeeRole: '',
         techGroup: '',
         requestType: '',
-        brownBagDate:new Date(), 
-        brownBagTopicType:'',
-        brownBagSpeakerWriteUp:'',
+        brownBagDate: new Date(),
+        brownBagTopicType: '',
+        brownBagSpeakerWriteUp: '',
         brownBagPresentationTopic: '',
-        brownBagDescription:'',
+        brownBagDescription: '',
         trainingMode: '',
         trainingType: '',
         trainingSource: '',
@@ -84,8 +85,6 @@ const TrainingRequestForm = () => {
 
     const [courses, setCourses] = useState<Course[]>([]);
     const [filteredCourses, setFilteredCourses] = useState<any[]>([]);
-    const [trainingMode, setTrainingMode] = useState<any[]>([]);
-    const [category, setCategory] = useState<any[]>([]);
     const [loading, setLoading] = useState(false)
     const userDetails = useSessionStorage("user")
     const [employeesData, setEmployeesData] = useState<any[]>([])
@@ -106,10 +105,6 @@ const TrainingRequestForm = () => {
                 const courses = await response.data.data;
 
                 if (courses) {
-                    const trainingCoursesGroup = groupByMultipleKeys(courses, ['trainingMode']);
-                    const trainingTypeGroup = groupByMultipleKeys(courses, ['category']);
-                    setTrainingMode(trainingCoursesGroup);
-                    setCategory(trainingTypeGroup);
                     setCourses(courses);
                     setFilteredCourses(courses); // Initially show all courses
                 }
@@ -178,7 +173,7 @@ const TrainingRequestForm = () => {
 
         try {
             setLoading(true);
-    
+
             if (payload.requestType === "training") {
                 // Handle training request submission
                 if (payload.participants.length < 1) {
@@ -204,9 +199,9 @@ const TrainingRequestForm = () => {
                         imageLink: formData.justificationFile ? URL.createObjectURL(formData.justificationFile) : ""
                     });
                 }
-    
+
                 toast.success("Training request submitted successfully");
-    
+
             } else if (payload.requestType === "brownBag") {
                 // Handle brown bag session request submission
                 const brownBagPayload = {
@@ -218,20 +213,20 @@ const TrainingRequestForm = () => {
                     speakerDescription: formData.brownBagSpeakerWriteUp,
                     requestDate: new Date().toISOString(),
                 };
-    
+
                 // Send Brown Bag session request
                 await axiosInstance.post('https://learningmanagementsystemhw-azc0a4fmgre6cabn.westus3-01.azurewebsites.net/api/BrownBagRequest/create', brownBagPayload);
-    
+
                 toast.success("Brown Bag session request submitted successfully");
             }
-    
+
         } catch (err) {
             console.error("Error submitting request:", err);
             toast.error("Error submitting request");
         } finally {
             setLoading(false);
         }
-    
+
         clearForm();
     };
 
@@ -239,11 +234,11 @@ const TrainingRequestForm = () => {
         setFormData({
             ...formData,
             requestType: '',
-            brownBagDate:undefined, 
-            brownBagTopicType:'',
-            brownBagSpeakerWriteUp:'',
+            brownBagDate: undefined,
+            brownBagTopicType: '',
+            brownBagSpeakerWriteUp: '',
             brownBagPresentationTopic: '',
-            brownBagDescription:'',
+            brownBagDescription: '',
             trainingMode: '',
             trainingType: '',
             trainingSource: '',
@@ -258,6 +253,20 @@ const TrainingRequestForm = () => {
 
     const isBulkRequest = formData.participants.length > 1;
     const isFriday = (date: Date) => date.getDay() === 5;
+
+    const isBrownBagFieldsFilled = formData.brownBagTopicType.trim() !== '' &&
+        formData.brownBagSpeakerWriteUp.trim() !== '' &&
+        formData.brownBagPresentationTopic.trim() !== '' &&
+        formData.brownBagDescription.trim() !== '' &&
+        formData.brownBagDate !== undefined;
+
+    const isTrainingFieldsFilled = formData.trainingMode.trim() !== '' &&
+        formData.trainingType.trim() !== '' &&
+        formData.trainingTopic !== '' &&
+        (formData.trainingTopic?.value !== -1 || formData.otherTrainingTopic.trim() !== '');
+
+    const isFormValid = formData.requestType === 'brownBag' ? isBrownBagFieldsFilled :
+        formData.requestType === 'training' ? isTrainingFieldsFilled : false;
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
@@ -339,7 +348,7 @@ const TrainingRequestForm = () => {
                                         </SelectTrigger>
                                         <SelectContent>
                                             {
-                                                trainingMode.map((mode, index) => (<SelectItem key={index} value={mode?.trainingMode}>{mode?.trainingMode}</SelectItem>))
+                                                TrainingMode.map((mode, index) => (<SelectItem key={index} value={mode}>{mode}</SelectItem>))
                                             }
                                         </SelectContent>
                                     </Select>
@@ -356,7 +365,7 @@ const TrainingRequestForm = () => {
                                         </SelectTrigger>
                                         <SelectContent>
                                             {
-                                                category.map((mode, index) => (<SelectItem key={index} value={mode?.category}>{mode?.category}</SelectItem>))
+                                                trainingGroup.map((mode, index) => (<SelectItem key={index} value={mode}>{mode}</SelectItem>))
                                             }
                                         </SelectContent>
                                     </Select>
@@ -439,11 +448,11 @@ const TrainingRequestForm = () => {
                 )}
 
                 {/* Brown Bag Session Details */}
-                     {formData.requestType === 'brownBag' && (
-                       <Card>
-                         <CardHeader className="bg-indigo-50">
-                         <CardTitle className="text-primary">Brown Bag Session Details</CardTitle>
-                         </CardHeader>
+                {formData.requestType === 'brownBag' && (
+                    <Card>
+                        <CardHeader className="bg-indigo-50">
+                            <CardTitle className="text-primary">Brown Bag Session Details</CardTitle>
+                        </CardHeader>
                         <CardContent className="space-y-6 mt-4">
                             {/* Topic Type */}
                             <div>
@@ -452,7 +461,7 @@ const TrainingRequestForm = () => {
                                     value={formData.brownBagTopicType}
                                     onChange={e => handleChange('brownBagTopicType', e.target.value)}
                                 />
-                                
+
                             </div>
 
                             {/* Topic Name */}
@@ -492,9 +501,9 @@ const TrainingRequestForm = () => {
                                     mode="single"
                                     selected={formData.brownBagDate}
                                     onSelect={d => handleChange('brownBagDate', d)}
-                                    disabled={date=>{
+                                    disabled={date => {
                                         const isFutureOrToday = date >= new Date(new Date().setHours(0, 0, 0, 0));
-                                         return !isFriday(date) || !isFutureOrToday;
+                                        return !isFriday(date) || !isFutureOrToday;
                                     }}
                                 />
                             </div>
@@ -506,7 +515,7 @@ const TrainingRequestForm = () => {
                 {/* Submit / Cancel Buttons */}
                 <div className="flex justify-end gap-4">
                     <Button type="button" variant="outline">Cancel</Button>
-                    <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white" disabled={formData.requestType === 'training' && (!Boolean(formData.trainingMode) || !Boolean(formData.trainingType) || !Boolean(formData.trainingTopic))}>
+                    <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white" disabled={!isFormValid}>
                         Submit Request
                     </Button>
                 </div>

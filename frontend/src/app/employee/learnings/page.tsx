@@ -9,11 +9,12 @@ import CoursesView, { CourseProgressCard } from '@/components/employee-component
 
 import RequestedCoursesView from '@/components/employee-components/RequestedCoursesView'
 import CardSkimmer from '@/components/CardSkimmer'
+import BrownBagRequests from '@/components/employee-components/BrownBagRequests'
 
 
 
 const Page: FC = () => {
-    const categories = ["Mandatory Compliance", "Your Courses", "Requested Courses"]
+    const categories = ["Mandatory Compliance", "Your Courses", "Requested Courses", "Brown Bag Requests"]
     const [selectedCategory, setSelectedCategory] = useState<string>(categories[0])
     const [filterStatus, setFilterStatus] = useState<string>("All")
     const dispatch = useAppDispatch();
@@ -46,8 +47,6 @@ const Page: FC = () => {
             setMandatoryCourses(reduxSavedCourses)
         }
     }, [dispatch])
-
-
 
     const getCoursesForCategory = (): Course[] => {
         let filteredCourses: any[] = reduxSavedCourses
@@ -121,10 +120,13 @@ const Page: FC = () => {
                                     ({coursesToDisplay.length})
                                 </span>
                             </h2>
-                            <div className='grid grid-cols-2 gap-4'>
-                                {loading ? <CardSkimmer /> : coursesToDisplay.length > 0 && coursesToDisplay.map((course, key) => (<CourseProgressCard key={key} data={course} />))}
 
-                            </div>
+                            {loading ? <CardSkimmer /> : coursesToDisplay.length > 0 && coursesToDisplay.map((course, key) => (
+                                <div className='grid grid-cols-2 gap-4' key={key}>
+                                    <CourseProgressCard data={course} />
+                                </div>
+                            ))}
+
                         </>
                     )
                 }
@@ -138,6 +140,12 @@ const Page: FC = () => {
                 {
                     selectedCategory === "Requested Courses" && (
                         <RequestedCoursesView selectedCategory={selectedCategory} />
+                    )
+                }
+
+                {
+                    selectedCategory === "Brown Bag Requests" && (
+                        <BrownBagRequests selectedCategory={selectedCategory} />
                     )
                 }
             </section>

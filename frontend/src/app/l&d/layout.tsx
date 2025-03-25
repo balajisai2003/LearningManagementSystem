@@ -7,7 +7,8 @@ import {
   ClipboardList,
   BookOpen,
   BarChart2,
-  BookUser
+  BookUser,
+  Speech
 } from 'lucide-react'
 
 const menuItems: MenuItem[] = [
@@ -20,6 +21,11 @@ const menuItems: MenuItem[] = [
     name: 'Training Requests',
     route: '/l&d/training-requests',
     icon: <ClipboardList size={24} />
+  },
+  {
+    name: 'Brown Bag Requests',
+    route: '/l&d/brown-bag-requests',
+    icon: <Speech size={24} />
   },
   {
     name: 'Reports & Analytics',

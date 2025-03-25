@@ -12,7 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Loader2, Search, AlertCircle, ExternalLink } from 'lucide-react'
+import { Search, AlertCircle, ExternalLink } from 'lucide-react'
 
 interface Course {
     courseID: number

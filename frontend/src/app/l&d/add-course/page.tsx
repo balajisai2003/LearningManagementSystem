@@ -24,6 +24,8 @@ import { Card } from "@/components/ui/card"
 import { Loader2 } from "lucide-react"
 import axiosInstance from "@/lib/axiosInstance"
 import { toast } from "sonner"
+import { trainingGroup } from "@/lib/trainingGroup"
+import { TrainingMode } from "@/lib/trainingMode"
 
 const formSchema = z.object({
     title: z.string().min(2, "Title must be at least 2 characters"),
@@ -39,22 +41,7 @@ const formSchema = z.object({
     resourceLink: z.string().url("Invalid URL format"),
 })
 
-const CATEGORIES = [
-    "Technical Skill",
-    "Org Mandatory Training",
-    "Certification",
-    "Mandatory trainings",
-    "Softskill",
-    "Technical skill"
-]
 
-const TRAINING_MODES = [
-    "Online Self Learning",
-    "LIVE - Virtual Training",
-    "Online",
-    "Offline",
-    "LIVE - Classroom training"
-]
 
 const CourseForm = () => {
     const form = useForm<z.infer<typeof formSchema>>({
@@ -122,7 +109,7 @@ const CourseForm = () => {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {CATEGORIES.map((category) => (
+                                            {trainingGroup.map((category) => (
                                                 <SelectItem key={category} value={category}>
                                                     {category}
                                                 </SelectItem>
@@ -148,7 +135,7 @@ const CourseForm = () => {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {TRAINING_MODES.map((mode) => (
+                                            {TrainingMode.map((mode) => (
                                                 <SelectItem key={mode} value={mode}>
                                                     {mode}
                                                 </SelectItem>

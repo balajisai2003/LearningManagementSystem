@@ -2,6 +2,7 @@ import { ChevronRight, Loader2, Play } from 'lucide-react';
 import React from 'react'
 import { Button } from './ui/button';
 import { Course } from '@/redux/features/employeeDataSlice';
+import { Status } from '@/types/Status';
 
 interface CourseCardProps {
     video: Course;
@@ -20,10 +21,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ video, handleCourseComplete, lo
                     <div className="flex justify-end items-center">
                         <p
                             className={`text-xs font-medium px-4 py-1 shadow-md rounded-lg ${video.status === "Completed"
-                                    ? "bg-[#4CAF50] text-white"
-                                    : video.status === "In Progress"
-                                        ? "bg-[#FFC107] text-white"
-                                        : "bg-[#F44336] text-white"
+                                ? "bg-[#4CAF50] text-white"
+                                : video.status === Status.Started
+                                    ? "bg-[#FFC107] text-white"
+                                    : "bg-[#F44336] text-white"
                                 }`}
                         >
                             {video.status}
@@ -53,7 +54,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ video, handleCourseComplete, lo
                             <span>Continue</span>
                             <ChevronRight size={20} />
                         </a>
-                        {video.status === "In Progress" && (
+                        {video.status === Status.Started && (
                             <Button
                                 onClick={() => handleCourseComplete(video.progressID)}
                                 className="flex items-center space-x-2 bg-[#FFC107] hover:bg-[#e6b300] text-white text-sm px-4 py-2 rounded-md transition-all duration-300"

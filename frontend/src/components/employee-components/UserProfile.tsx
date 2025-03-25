@@ -18,15 +18,15 @@ import { Badge } from '../ui/badge'
 const CarouselConfiguration = [
     {
         image: banner3,
-        link: 'https://www.google.com'
+        link: 'https://www.winwire.com/'
     },
     {
         image: banner1,
-        link: 'https://www.google.com'
+        link: 'https://www.winwire.com/'
     },
     {
         image: banner2,
-        link: 'https://www.google.com'
+        link: 'https://www.winwire.com/'
     }
 ]
 

@@ -70,7 +70,7 @@ const VideoCarousel = () => {
   }, [dispatch]);
 
   return (
-    <div className='w-full card-style bg-white flex flex-col justify-center items-center py-4 space-y-2 my-2'>
+    <div className='w-full card-style bg-white flex flex-col justify-center items-center py-4 space-y-2 my-4'>
       <div className='flex justify-start w-full px-4'>
         <h2 className='text-lg text-start font-semibold'>Courses You Are Currently Enrolled In</h2>
       </div>

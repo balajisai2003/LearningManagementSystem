@@ -2,7 +2,7 @@
 import { Smile, SquareMousePointer } from 'lucide-react';
 import React from 'react';
 import 'react-circular-progressbar/dist/styles.css';
-import { check, event } from '@/assets';
+import { event } from '@/assets';
 import Image from 'next/image';
 import Link from 'next/link';
 import PointsCard from './PointsCard';
@@ -93,10 +93,9 @@ const EventAndStats = () => {
                                     </div>
                                 </div>
                                 <div className='flex flex-col justify-center items-center space-y-2'>
-                                    <Link href={e.registerUrl} target='_blank'>
-                                        <SquareMousePointer size={20} className='cursor-pointer' />
+                                    <Link href={e.registerUrl} target='_blank' className='flex items-center space-x-2 border rounded-sm py-1 px-2 shadow-sm border-blue-500 text-blue-500 bg-blue-50 text-xs'>
+                                        <span>Visit Resource</span><SquareMousePointer size={15} className='cursor-pointer' />
                                     </Link>
-                                    <Image src={check} width={500} height={500} alt='event' className='w-[20px] h-[20px] cursor-pointer' />
                                 </div>
                             </div>
                         )) :
