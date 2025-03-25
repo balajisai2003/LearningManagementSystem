@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import ".././globals.css";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { MenuItem } from "@/types/MenuItem";
@@ -8,7 +7,6 @@ import {
   ClipboardList,
   BookOpen,
   BarChart2,
-  LogOut,
   BookUser
 } from 'lucide-react'
 
@@ -38,24 +36,12 @@ const menuItems: MenuItem[] = [
     route: '/l&d/courses',
     icon: <BookOpen size={24} />
   },
-  {
-    name: 'Log Out',
-    route: 'l&d/logout',
-    icon: <LogOut size={24} />
-  }
+
 ]
 
 
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -70,14 +56,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Sidebar menuItems={menuItems}>
-          {children}
-        </Sidebar>
-      </body>
-    </html>
+    <Sidebar menuItems={menuItems}>
+      {children}
+    </Sidebar>
   );
 }

@@ -8,9 +8,11 @@ import {
 } from "@/components/ui/carousel"
 
 import Autoplay from "embla-carousel-autoplay"
-import { banner1, banner2, banner3, profile } from '@/assets'
+import { banner1, banner2, banner3 } from '@/assets'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSessionStorage } from '@/hooks/useSessionStorage'
+import { Badge } from '../ui/badge'
 
 
 const CarouselConfiguration = [
@@ -32,6 +34,8 @@ function CarouselPlugin() {
     const plugin = React.useRef(
         Autoplay({ delay: 4000, stopOnInteraction: false })
     )
+
+
 
     return (
         <Carousel
@@ -60,15 +64,29 @@ function CarouselPlugin() {
 
 
 const UserProfile = () => {
+    const userStr = useSessionStorage('user');
+    const getInitials = (name: string) => {
+        const names = name?.split(' ');
+        const initials = `${names?.[0]?.charAt(0)} ${names?.[1]?.charAt(0)}`;
+        return initials?.toUpperCase();
+    };
+
     return (
         <div className='my-4 flex items-start space-x-4'>
             <div className=' bg-white card-style overflow-hidden' style={{ flex: 3 }}>
                 <CarouselPlugin />
             </div>
-            <div className='bg-white py-2 card-style flex flex-col justify-center items-center text-center rounded-lg shadow-md h-[250px] space-y-2' style={{ flex: 1 }}>
-                <Image src={profile} width={100} height={100} alt='profile' className='mt-3 w-[100px] h-[100px] object-cover border-4 border-primary rounded-full' />
-                <h3 className=' text-xl font-semibold text-black p-1'>Shoyeab Aslam</h3>
-                <h4 className=' text-sm font-light text-gray-800'>Software Design Trainee</h4>
+            <div className="flex flex-col justify-center items-center text-center bg-white card-style   transition-shadow duration-300 h-[250px] p-4 space-y-3" style={{ flex: 1 }}>
+                <div className="flex items-center justify-center w-[80px] h-[80px] rounded-full bg-gradient-to-r from-primary to-blue-600 text-white text-3xl font-bold shadow-md">
+                    {getInitials(userStr?.name)}
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">{userStr?.name}</h3>
+                <p className="text-sm text-gray-800 font-medium">{userStr?.designation} <span className="text-xs text-gray-600">({userStr?.cadre})</span></p>
+                <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
+                    <Badge >{userStr?.techGroup}</Badge>
+                    <span>|</span>
+                    <span className="text-gray-500">{userStr?.location}</span>
+                </div>
             </div>
         </div>
     )

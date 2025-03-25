@@ -12,6 +12,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { RootState } from '@/redux/app/store';
+import { Status } from '@/types/Status';
 
 const events = [
     {
@@ -46,7 +47,7 @@ const events = [
 
 
 const EventAndStats = () => {
-    const courses = useSelector((state: RootState) => state.employeeDataSlice.courses);
+    const courses = useSelector((state: RootState) => state?.employeeDataSlice?.courses);
     const [statusData, setStatusData] = useState({
         labels: ["Completed", "In Progress", "Not Started"],
         datasets: [
@@ -60,9 +61,9 @@ const EventAndStats = () => {
 
     useEffect(() => {
         if (courses.length > 0) {
-            const completed = courses.filter(course => course.status === "Completed").length;
-            const inProgress = courses.filter(course => course.status === "In Progress").length;
-            const notStarted = courses.filter(course => course.status === "Not Started").length;
+            const completed = courses.filter(course => course.status === Status.Completed).length;
+            const inProgress = courses.filter(course => course.status === Status.Started).length;
+            const notStarted = courses.filter(course => course.status === Status.NotStarted).length;
 
             setStatusData({
                 labels: ["Completed", "In Progress", "Not Started"],

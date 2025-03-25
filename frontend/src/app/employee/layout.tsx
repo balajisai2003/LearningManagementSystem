@@ -1,22 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import ".././globals.css";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { Home, Book, FileText, Clipboard, LogOut } from 'lucide-react'; // Import Lucide Icons
+import { Home, Book, FileText, Clipboard } from 'lucide-react'; // Import Lucide Icons
 import { MenuItem } from "@/types/MenuItem";
-import { ReduxProvider } from "@/redux/provider";
 import { ToasterProvider } from "@/components/Toaster";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,27 +17,18 @@ const menuItems: MenuItem[] = [
   { name: 'New Request', route: '/employee/new-request', icon: <FileText size={24} /> },
   { name: 'Certificates', route: '/employee/certificates', icon: <Clipboard size={24} /> },
   { name: 'KRA’s & Goals', route: '/employee/kras-goals', icon: <Clipboard size={24} /> },
-  { name: 'Log Out', route: '/logout', icon: <LogOut size={24} /> },
 ];
 
-export default function RootLayout({
+export default function EmployeeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Sidebar menuItems={menuItems}>
-          <ReduxProvider>
-            <ToasterProvider>
-              {children}
-            </ToasterProvider>
-          </ReduxProvider>
-        </Sidebar>
-      </body>
-    </html>
+    <Sidebar menuItems={menuItems}>
+      <ToasterProvider>
+        {children}
+      </ToasterProvider>
+    </Sidebar>
   );
 }

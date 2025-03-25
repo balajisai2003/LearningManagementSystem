@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit"
 import employeeDataSlice from "../features/employeeDataSlice";
+import lndDataSlice from "../features/lndDataSlice";
 
 export const store = configureStore({
     reducer: {
-        employeeDataSlice: employeeDataSlice
+        employeeDataSlice: employeeDataSlice,
+        lndDataSlice: lndDataSlice,
     }
 })
 
