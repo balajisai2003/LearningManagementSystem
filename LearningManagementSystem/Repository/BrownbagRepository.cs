@@ -13,32 +13,32 @@ namespace LearningManagementSystem.Repository
             _dbHelper = dbHelper;
         }
 
-        public IEnumerable<Brownbag> GetAllBrownbags()
+        public async Task<IEnumerable<Brownbag>> GetAllBrownbags()
         {
             using (var db = _dbHelper.GetConnection())
             {
-                var response =  db.Query<Brownbag>("SELECT * FROM BrownbagRequest");
+                var response = await db.QueryAsync<Brownbag>("SELECT * FROM BrownbagRequest");
                 return response;
             }
         }
 
-        public IEnumerable<Brownbag> GetBrownbagsByEmployeeId(int employeeId)
+        public async Task<IEnumerable<Brownbag>> GetBrownbagsByEmployeeId(int employeeId)
         {
             using (var db = _dbHelper.GetConnection())
             {
                 string sql = "Select * from BrownbagRequest where EmployeeId = @EmployeeId";
-                var response = db.Query<Brownbag>(sql, new { EmployeeId = employeeId});
+                var response = await db.QueryAsync<Brownbag>(sql, new { EmployeeId = employeeId });
                 return response;
             }
         }
 
-        public bool RequestDateChecker(DateTime requestDate)
+        public async Task<bool> RequestDateCheckerAsync(DateTime requestDate)
         {
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = "SELECT COUNT(*) FROM BrownbagRequest WHERE RequestDate = @RequestDate";
-                int requestExists = db.ExecuteScalar<int>(sql, new { RequestDate = requestDate });
-                if(requestExists > 0)
+                int requestExists = await db.ExecuteScalarAsync<int>(sql, new { RequestDate = requestDate });
+                if (requestExists > 0)
                 {
                     return true;
                 }
@@ -46,12 +46,12 @@ namespace LearningManagementSystem.Repository
             }
         }
 
-        public int CreateBrownbag(Brownbag brownbag)
+        public async Task<int> CreateBrownbag(Brownbag brownbag)
         {
             using (var db = _dbHelper.GetConnection())
             {
-                
-                bool requestExists = RequestDateChecker(brownbag.RequestDate);
+
+                bool requestExists = await RequestDateCheckerAsync(brownbag.RequestDate);
 
                 if (requestExists)
                 {
@@ -60,6 +60,33 @@ namespace LearningManagementSystem.Repository
                 }
 
                 var sql = "INSERT INTO BrownbagRequest (EmployeeId, EmployeeName, TopicType, TopicName, Agenda, SpeakerDescription, RequestDate) VALUES (@EmployeeID, @EmployeeName, @TopicType, @TopicName, @Agenda, @SpeakerDescription, @RequestDate)";
+                int response = await db.ExecuteAsync(sql, new
+                {
+                    brownbag.EmployeeID,
+                    brownbag.EmployeeName,
+                    brownbag.TopicType,
+                    brownbag.TopicName,
+                    brownbag.Agenda,
+                    brownbag.SpeakerDescription,
+                    brownbag.RequestDate,
+                });
+                return response;
+            }
+        }
+
+        public async Task<int> UpdateBrownbagByIdAsync(int id, Brownbag brownbag)
+        {
+            using (var db = _dbHelper.GetConnection())
+            {
+                bool requestExists = await RequestDateCheckerAsync(brownbag.RequestDate);
+
+                if (requestExists)
+                {
+                    Console.WriteLine("There already exists a brownbag session on the choosen date!!");
+                    return 0;
+                }
+
+                var sql = "UPDATE BrownbagRequest SET EmployeeID = @EmployeeId, EmployeeName = @EmployeeName, TopicType = @TopicType, TopicName = @TopicName, Agenda = @Agenda, SpeakerDescription = @SpeakerDescription, RequestDate = @RequestDate, Status = @Status WHERE RequestID = @RequestID";
                 int response = db.Execute(sql, new
                 {
                     brownbag.EmployeeID,
@@ -68,30 +95,42 @@ namespace LearningManagementSystem.Repository
                     brownbag.TopicName,
                     brownbag.Agenda,
                     brownbag.SpeakerDescription,
-                    brownbag.RequestDate
+                    brownbag.RequestDate,
+                    brownbag.Status,
+                    RequestID = id,
                 });
                 return response;
             }
         }
 
-        public int UpdateBrownbagById(int id, Brownbag brownbag)
+        public int UpdateBrownbagStatusById(int id, string status)
         {
             using (var db = _dbHelper.GetConnection())
             {
-                bool requestExists = RequestDateChecker(brownbag.RequestDate);
-
-                if (requestExists)
-                {
-                    Console.WriteLine("There already exists a brownbag session on the choosen date!!");
-                    return 0;
-                }
-
-                var sql = "UPDATE BrownbagRequest SET EmployeeID = @EmployeeId, EmployeeName = @EmployeeName, TopicType = @TopicType, TopicName = @TopicName, Agenda = @Agenda, SpeakerDescription = @SpeakerDescription, RequestDate = @RequestDate WHERE RequestID = @RequestID";
-                int response = db.Execute(sql, new 
-                { brownbag.EmployeeID, brownbag.EmployeeName, brownbag.TopicType, brownbag.TopicName, brownbag.Agenda, brownbag.SpeakerDescription, brownbag.RequestDate, RequestID = id 
-                });
+                var sql = "UPDATE BrownbagRequest SET Status = @Status WHERE RequestID = @RequestID";
+                int response = db.Execute(sql, new { Status = status, RequestID = id });
                 return response;
             }
+        }
+
+        public bool ApproveBrownbagById(int id)
+        {
+            var response = UpdateBrownbagStatusById(id, "Approved");
+            if (response > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool RejectBrownbagById(int id)
+        {
+            var response = UpdateBrownbagStatusById(id, "Rejected");
+            if (response > 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         public int DeleteBrownbagById(int id)

@@ -111,7 +111,7 @@ namespace LearningManagementSystem.Services
         public ResponseDTO GetBrownBagSessionsByEmployeeId(int employeeId)
         {
             var brownbags = repository.GetBrownbagsByEmployeeId(employeeId);
-            if (brownbags != null || brownbags.Count() == 0)
+            if (brownbags != null || brownbags. == 0)
             {
                 _responseDTO.Success = true;
                 _responseDTO.Message = "Successfully fetched all brownbag sessions by the employee.";

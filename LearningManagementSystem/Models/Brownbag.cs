@@ -12,5 +12,6 @@ namespace LearningManagementSystem.Models
         public string Agenda { get; set; }
         public string SpeakerDescription { get; set; }
         public DateTime RequestDate { get; set; }
+        public string Status { get; set; }
     }
 }

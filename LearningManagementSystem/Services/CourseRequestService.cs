@@ -74,7 +74,7 @@ namespace LearningManagementSystem.Services
                 if (created)
                 {
                     form.RequestID = requestId;
-                    //_mailService.SendMail(form.em)
+                    _mailService.SendMail(form.em)
                 }
                 return new ResponseDTO
                 {
