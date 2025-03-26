@@ -54,7 +54,8 @@ namespace LearningManagementSystem.Services
                 if (created > 0)
                 {
                     var employee = await _employeeRepository.GetEmployeeByIDAsync(brownbag.EmployeeID);
-                    var emailResponse = _mailService.SendMailBrownBagEmployees(employee .Email,brownbag);
+                    var emailEmployeeResponse = await _mailService.SendMailBrownBagEmployees(employee.Email, brownbag);
+                    var emailLndResponse = await _mailService.SendMailBrownBagLnd(brownbag);
                 }
                 _responseDTO.Success = created > 0;
                 _responseDTO.Message = _responseDTO.Success ? "Successfully created a new brownbag session." : "Failed to create the brownbag session.";

@@ -17,14 +17,16 @@ namespace LearningManagementSystem.Services
         private readonly CourseRequestFormRepository _courseRequestRepository;
         private readonly CourseProgressRepository _courseProgressRepository;
         private readonly EmployeeRepository _employeeRepository;
+        private readonly CourseRepository _courseRepository;
         private readonly ResponseDTO _responseDTO;
         private IConfiguration _configuration;
         private MailService _mailService;
 
-        public CourseRequestService(CourseRequestFormRepository courseRequestRepository, CourseProgressRepository courseProgressRepository,EmployeeRepository employeeRepository, IConfiguration configuration)
+        public CourseRequestService(CourseRequestFormRepository courseRequestRepository, CourseProgressRepository courseProgressRepository,EmployeeRepository employeeRepository,CourseRepository courseRepository, IConfiguration configuration)
         {
             _courseRequestRepository = courseRequestRepository;
             _courseProgressRepository = courseProgressRepository;
+            _courseRepository = courseRepository;
             _employeeRepository = employeeRepository;
             _responseDTO = new ResponseDTO();
             _configuration = configuration;
@@ -51,7 +53,7 @@ namespace LearningManagementSystem.Services
                     ? requestDetails.RequestEmpIDs.Split(',').Select(int.Parse).ToList()
                     : new List<int>();
 
-                var progressResult = await _courseProgressRepository.AddMultipleCourseProgressAsync(requestDetails.CourseID, requestEmpIds, newOrReused, requestDetails.EmployeeID); // need to add the employeeId parameter here so that the requestorEmployeeId will be passed correctly and updated in db as well -> we currently are not passing it..gotta fix it goddamn it!!
+                var progressResult = await _courseProgressRepository.AddMultipleCourseProgressAsync(requestDetails.CourseID, requestEmpIds, newOrReused, requestDetails.EmployeeID);
                 bool success = await _courseRequestRepository.ApproveRequestAsync(requestId) || progressResult.Success;
 
                 return new ResponseDTO
@@ -76,9 +78,11 @@ namespace LearningManagementSystem.Services
                 if (created)
                 {
                     form.RequestID = requestId;
+                    Course course = await _courseRepository.GetCourseById(form.CourseID);
                     var employee = await _employeeRepository.GetEmployeeByIDAsync(form.EmployeeID);
-                    var employeeMail = await _mailService.SendMailToEmployee(employee.Email, form);
-                    var lndMail = await _mailService.SendMailToLnD(form);
+
+                    var employeeMail = await _mailService.SendMailToEmployee(employee, form,course);
+                    var lndMail = await _mailService.SendMailToLnD(employee, form, course);
                 }
                 return new ResponseDTO
                 {
