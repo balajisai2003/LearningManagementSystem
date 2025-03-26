@@ -78,7 +78,7 @@ namespace LearningManagementSystem.Services
                     form.RequestID = requestId;
                     var employee = await _employeeRepository.GetEmployeeByIDAsync(form.EmployeeID);
                     var employeeMail = await _mailService.SendMailToEmployee(employee.Email, form);
-                    //var lndMail = await _mailService.SendMailToLnD(form);
+                    var lndMail = await _mailService.SendMailToLnD(form);
                 }
                 return new ResponseDTO
                 {
