@@ -28,7 +28,7 @@ namespace LearningManagementSystem.Utils
                                        $"Thank you for submitting your course request form. Here are the details:\n\n" +
                                        $"Employee ID: {requestForm.EmployeeID}\n" +
                                        $"Course ID: {requestForm.CourseID}\n" +
-                                       $"Requested Date: {requestForm.RequestDate.Date}\n" +
+                                       $"Requested Date: {DateOnly.FromDateTime(requestForm.RequestDate)}\n" +
                                        $"Requested Employee IDs: {requestForm.RequestEmpIDs}\n\n" +
                                        $"Learning and Development (L&D) team will reach out to you within 24-48 hours.\n\n" +
                                        $"Thank you,\n" +
@@ -37,7 +37,7 @@ namespace LearningManagementSystem.Utils
                                   $"<p>Thank you for submitting your course request form. Here are the details:</p>" +
                                   $"<strong>Employee ID:</strong> {requestForm.EmployeeID}<br>" +
                                   $"<strong>Course ID:</strong> {requestForm.CourseID}<br>" +
-                                  $"<strong>Requested Date:</strong> {requestForm.RequestDate.Date}<br>" +
+                                  $"<strong>Requested Date:</strong> {DateOnly.FromDateTime(requestForm.RequestDate)}<br>" +
                                   $"<strong>Requested Employee IDs:</strong> {requestForm.RequestEmpIDs}</p>" +
                                   $"<p>Learning and Development (L&D) team will reach out to you within 24-48 hours.</p>" +
                                   $"<p>Thank you,<br>" +
@@ -85,13 +85,13 @@ namespace LearningManagementSystem.Utils
                                        $"Request ID: {requestForm.RequestID}\n" +
                                        $"Employee ID: {requestForm.EmployeeID}\n" +
                                        $"Course ID: {requestForm.CourseID}\n" +
-                                       $"Requested Date: {requestForm.RequestDate.Date}\n" +
+                                       $"Requested Date: {DateOnly.FromDateTime(requestForm.RequestDate)}\n" +
                                        $"Requested Employee IDs: {requestForm.RequestEmpIDs}\n";
                 var htmlContent = $"<p>A new course request form has been submitted. Here are the details:</p>" +
                                   $"<strong>Request ID:</strong> {requestForm.RequestID}<br>" +
                                   $"<strong>Employee ID:</strong> {requestForm.EmployeeID}<br>" +
                                   $"<strong>Course ID:</strong> {requestForm.CourseID}<br>" +
-                                  $"<strong>Requested Date:</strong> {requestForm.RequestDate.Date}<br>" +
+                                  $"<strong>Requested Date:</strong> {DateOnly.FromDateTime(requestForm.RequestDate)}<br>" +
                                   $"<strong>Requested Employee IDs:</strong> {requestForm.RequestEmpIDs}</p>";
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
 
