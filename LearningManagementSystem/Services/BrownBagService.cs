@@ -6,6 +6,8 @@ using Dapper;
 using LearningManagementSystem.Repository;
 using System;
 using System.Threading.Tasks;
+using LearningManagementSystem.Utils;
+using Microsoft.Extensions.Configuration;
 
 namespace LearningManagementSystem.Services
 {
@@ -13,10 +15,16 @@ namespace LearningManagementSystem.Services
     {
         private readonly BrownbagRepository repository;
         private readonly ResponseDTO _responseDTO;
+        private readonly IConfiguration _configuration;
+        private readonly EmployeeRepository _employeeRepository;
+        private MailService _mailService;
 
-        public BrownBagService(DatabaseHelper dbhelper)
+        public BrownBagService(DatabaseHelper dbhelper,IConfiguration configuration)
         {
             repository = new BrownbagRepository(dbhelper);
+            _employeeRepository = new EmployeeRepository(dbhelper);
+            _configuration = configuration;
+            _mailService = new MailService(_configuration);
             _responseDTO = new ResponseDTO();
         }
 
@@ -43,6 +51,11 @@ namespace LearningManagementSystem.Services
             try
             {
                 int created = await repository.CreateBrownbagAsync(brownbag);
+                if (created > 0)
+                {
+                    var employee = await _employeeRepository.GetEmployeeByIDAsync(brownbag.EmployeeID);
+                    var emailResponse = _mailService.SendMailBrownBagEmployees(employee .Email,brownbag);
+                }
                 _responseDTO.Success = created > 0;
                 _responseDTO.Message = _responseDTO.Success ? "Successfully created a new brownbag session." : "Failed to create the brownbag session.";
                 _responseDTO.Data = created;
