@@ -127,5 +127,41 @@ namespace LearningManagementSystem.Services
             }
             return _responseDTO;
         }
+
+        public async Task<ResponseDTO> ApproveBrownBagSessionAsync(int requestId)
+        {
+            try
+            {
+                var response = await repository.ApproveBrownbagByIdAsync(requestId);
+                _responseDTO.Success = response;
+                _responseDTO.Message = response ? "Successfully approved the brownbag session." : "Brownbag session not found or approval failed.";
+                _responseDTO.Data = response;
+            }
+            catch(Exception ex)
+            {
+                _responseDTO.Success = false;
+                _responseDTO.Message = "An error occurred while fetching brownbag sessions by the employee.";
+                _responseDTO.Data = ex.Message;
+            }
+            return _responseDTO;
+        }
+
+        public async Task<ResponseDTO> RejectBrownBagSessionAsync(int requestId)
+        {
+            try
+            {
+                var response = await repository.RejectBrownbagByIdAsync(requestId);
+                _responseDTO.Success = response;
+                _responseDTO.Message = response ? "Successfully rejected the brownbag session." : "Brownbag session not found or rejection failed.";
+                _responseDTO.Data = response;
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.Success = false;
+                _responseDTO.Message = "An error occurred while fetching brownbag sessions by the employee.";
+                _responseDTO.Data = ex.Message;
+            }
+            return _responseDTO;
+        }
     }
 }

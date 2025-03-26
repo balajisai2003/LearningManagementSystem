@@ -36,8 +36,10 @@ namespace LearningManagementSystem.Repository
         {
             using (var db = _dbHelper.GetConnection())
             {
-                var sql = "SELECT COUNT(*) FROM BrownbagRequest WHERE RequestDate = @RequestDate";
-                int requestExists = await db.ExecuteScalarAsync<int>(sql, new { RequestDate = requestDate });
+                //requestDate.Date;
+                //var sql = "SELECT COUNT(*) FROM BrownbagRequest WHERE RequestDate = @RequestDate";
+                var sql = "SELECT COUNT(*) FROM BrownbagRequest WHERE Datepart(RequestDate) = Date(@RequestDate)";
+                int requestExists = await db.ExecuteScalarAsync<int>(sql, new { RequestDate = requestDate.Date });
                 if (requestExists > 0)
                 {
                     return true;
@@ -51,13 +53,13 @@ namespace LearningManagementSystem.Repository
             using (var db = _dbHelper.GetConnection())
             {
 
-                bool requestExists = await RequestDateCheckerAsync(brownbag.RequestDate);
+                //bool requestExists = await RequestDateCheckerAsync(brownbag.RequestDate);
 
-                if (requestExists)
-                {
-                    Console.WriteLine("There already exists a brownbag session on the choosen date!!");
-                    return 0;
-                }
+                //if (requestExists)
+                //{
+                //    Console.WriteLine("There already exists a brownbag session on the choosen date!!");
+                //    return 0;
+                //}
 
                 var sql = "INSERT INTO BrownbagRequest (EmployeeId, EmployeeName, TopicType, TopicName, Agenda, SpeakerDescription, RequestDate) VALUES (@EmployeeID, @EmployeeName, @TopicType, @TopicName, @Agenda, @SpeakerDescription, @RequestDate)";
                 int response = await db.ExecuteAsync(sql, new
@@ -78,13 +80,13 @@ namespace LearningManagementSystem.Repository
         {
             using (var db = _dbHelper.GetConnection())
             {
-                bool requestExists = await RequestDateCheckerAsync(brownbag.RequestDate);
+                //bool requestExists = await RequestDateCheckerAsync(brownbag.RequestDate);
 
-                if (requestExists)
-                {
-                    Console.WriteLine("There already exists a brownbag session on the choosen date!!");
-                    return 0;
-                }
+                //if (requestExists)
+                //{
+                //    Console.WriteLine("There already exists a brownbag session on the choosen date!!");
+                //    return 0;
+                //}
 
                 var sql = "UPDATE BrownbagRequest SET EmployeeID = @EmployeeId, EmployeeName = @EmployeeName, TopicType = @TopicType, TopicName = @TopicName, Agenda = @Agenda, SpeakerDescription = @SpeakerDescription, RequestDate = @RequestDate, Status = @Status WHERE RequestID = @RequestID";
                 int response = db.Execute(sql, new

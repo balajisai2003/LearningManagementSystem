@@ -58,7 +58,18 @@ namespace LearningManagementSystem.Controllers
             return response;
         }
 
+        [HttpPatch("accept/{requestId}")]
+        public async Task<ResponseDTO> AcceptBrownBagRequest(int requestId)
+        {
+            var response = await _brownBagService.ApproveBrownBagSessionAsync(requestId);
+            return response;
+        }
 
-
+        [HttpPatch("reject/{requestId}")]
+        public async Task<ResponseDTO> RejectBrownBagRequest(int requestId)
+        {
+            var response = await _brownBagService.RejectBrownBagSessionAsync(requestId);
+            return response;
+        }
     }
 }
