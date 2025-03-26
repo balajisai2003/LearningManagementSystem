@@ -29,12 +29,13 @@ namespace LearningManagementSystem.Repository
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = @"
-            SELECT crf.*, c.*
+            SELECT crf.*, c.*, e.*
             FROM CourseRequestForm crf
-            JOIN Courses c ON crf.CourseID = c.CourseID";
-                var result = await db.QueryAsync<CourseRequestForm, Course, CourseRequestFormWithDetails>(
+            JOIN Courses c ON crf.CourseID = c.CourseID
+            JOIN Employees e ON crf.EmployeeID = e.EmployeeID";
+                var result = await db.QueryAsync<CourseRequestForm, Course, Employee, CourseRequestFormWithDetails>(
                     sql,
-                    (courseRequestForm, course) =>
+                    (courseRequestForm, course, employee) =>
                     {
                         return new CourseRequestFormWithDetails
                         {
@@ -46,14 +47,16 @@ namespace LearningManagementSystem.Repository
                             Status = courseRequestForm.Status,
                             Comments = courseRequestForm.Comments,
                             ImageLink = courseRequestForm.ImageLink,
-                            CourseDetails = course
+                            CourseDetails = course,
+                            EmployeeDetails = employee
                         };
                     },
-                    splitOn: "CourseID"
+                    splitOn: "CourseID,EmployeeID"
                 );
                 return result;
             }
         }
+
 
 
         public async Task<IEnumerable<CourseRequestForm>> GetBulkRequestsAsync()
@@ -95,13 +98,14 @@ namespace LearningManagementSystem.Repository
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = @"
-            SELECT crf.*, c.*
-            FROM CourseRequestForm crf
-            JOIN Courses c ON crf.CourseID = c.CourseID
-            WHERE crf.RequestID = @RequestID";
-                var result = await db.QueryAsync<CourseRequestForm, Course, CourseRequestFormWithDetails>(
+                    SELECT crf.*, c.*, e.*
+                    FROM CourseRequestForm crf
+                    JOIN Courses c ON crf.CourseID = c.CourseID
+                    JOIN Employees e ON crf.EmployeeID = e.EmployeeID
+                    WHERE crf.RequestID = @RequestID";
+                var result = await db.QueryAsync<CourseRequestForm, Course, Employee, CourseRequestFormWithDetails>(
                     sql,
-                    (courseRequestForm, course) =>
+                    (courseRequestForm, course, employee) =>
                     {
                         return new CourseRequestFormWithDetails
                         {
@@ -113,11 +117,12 @@ namespace LearningManagementSystem.Repository
                             Status = courseRequestForm.Status,
                             Comments = courseRequestForm.Comments,
                             ImageLink = courseRequestForm.ImageLink,
-                            CourseDetails = course
+                            CourseDetails = course,
+                            EmployeeDetails = employee
                         };
                     },
                     new { RequestID = id },
-                    splitOn: "CourseID"
+                    splitOn: "CourseID,EmployeeID"
                 );
                 return result.FirstOrDefault();
             }
@@ -137,13 +142,14 @@ namespace LearningManagementSystem.Repository
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = @"
-            SELECT crf.*, c.*
-            FROM CourseRequestForm crf
-            JOIN Courses c ON crf.CourseID = c.CourseID
-            WHERE crf.EmployeeID = @EmployeeID";
-                var result = await db.QueryAsync<CourseRequestForm, Course, CourseRequestFormWithDetails>(
+                    SELECT crf.*, c.*, e.*
+                    FROM CourseRequestForm crf
+                    JOIN Courses c ON crf.CourseID = c.CourseID
+                    JOIN Employees e ON crf.EmployeeID = e.EmployeeID
+                    WHERE crf.EmployeeID = @EmployeeID";
+                var result = await db.QueryAsync<CourseRequestForm, Course, Employee, CourseRequestFormWithDetails>(
                     sql,
-                    (courseRequestForm, course) =>
+                    (courseRequestForm, course, employee) =>
                     {
                         return new CourseRequestFormWithDetails
                         {
@@ -155,11 +161,12 @@ namespace LearningManagementSystem.Repository
                             Status = courseRequestForm.Status,
                             Comments = courseRequestForm.Comments,
                             ImageLink = courseRequestForm.ImageLink,
-                            CourseDetails = course
+                            CourseDetails = course,
+                            EmployeeDetails = employee
                         };
                     },
                     new { EmployeeID = employeeId },
-                    splitOn: "CourseID"
+                    splitOn: "CourseID,EmployeeID"
                 );
                 return result;
             }
@@ -238,6 +245,7 @@ namespace LearningManagementSystem.Repository
     {
         public int RequestID { get; set; }
         public int EmployeeID { get; set; }
+        public Employee EmployeeDetails { get; set; }
         public int CourseID { get; set; }
         public string RequestEmpIDs { get; set; }
         public DateTime RequestDate { get; set; }
@@ -245,6 +253,7 @@ namespace LearningManagementSystem.Repository
         public string Comments { get; set; }
         public string ImageLink { get; set; }
         public Course CourseDetails { get; set; }
+    
     }
 
 }
