@@ -16,14 +16,16 @@ namespace LearningManagementSystem.Services
     {
         private readonly CourseRequestFormRepository _courseRequestRepository;
         private readonly CourseProgressRepository _courseProgressRepository;
+        private readonly EmployeeRepository _employeeRepository;
         private readonly ResponseDTO _responseDTO;
         private IConfiguration _configuration;
         private MailService _mailService;
 
-        public CourseRequestService(CourseRequestFormRepository courseRequestRepository, CourseProgressRepository courseProgressRepository, IConfiguration configuration)
+        public CourseRequestService(CourseRequestFormRepository courseRequestRepository, CourseProgressRepository courseProgressRepository,EmployeeRepository employeeRepository, IConfiguration configuration)
         {
             _courseRequestRepository = courseRequestRepository;
             _courseProgressRepository = courseProgressRepository;
+            _employeeRepository = employeeRepository;
             _responseDTO = new ResponseDTO();
             _configuration = configuration;
             _mailService = new MailService(configuration);
@@ -74,7 +76,9 @@ namespace LearningManagementSystem.Services
                 if (created)
                 {
                     form.RequestID = requestId;
-                    //_mailService.SendMail(form.em)
+                    var employee = await _employeeRepository.GetEmployeeByIDAsync(form.EmployeeID);
+                    var employeeMail = await _mailService.SendMailToEmployee(employee.Email, form);
+                    var lndMail = await _mailService.SendMailToLnD(form);
                 }
                 return new ResponseDTO
                 {

@@ -35,7 +35,7 @@ namespace LearningManagementSystem.Controllers
             }
             var response = await  _requestService.GetRequestByIdAsync(requestId);
             return response; 
-        }//getr req by emp id..
+        }
 
         [HttpPost("create")]
         public async Task<ResponseDTO> CreateRequestFormAsync( CourseRequestForm form)
