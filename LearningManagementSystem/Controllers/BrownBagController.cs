@@ -17,44 +17,44 @@ namespace LearningManagementSystem.Controllers
         }
         
         [HttpGet("Requests")]
-        public ResponseDTO GetAllBrownBagSessions()
+        public async Task<ResponseDTO> GetAllBrownBagSessions()
         {
-            var response = _brownBagService.GetAllBrownBagSessions();
+            var response = await _brownBagService.GetAllBrownBagSessionsAsync();
             return response;
         }
 
         [HttpPost("create")]
-        public ResponseDTO Create(Brownbag brownbag)
+        public async Task<ResponseDTO> Create(Brownbag brownbag)
         {
-            var response = _brownBagService.CreateBrownBagSession(brownbag);
+            var response = await _brownBagService.CreateBrownBagSessionAsync(brownbag);
             return response;
         }
 
         [HttpDelete("delete/{requestId}")]
-        public ResponseDTO Delete(int requestId)
+        public async Task<ResponseDTO> Delete(int requestId)
         {
-            var response = _brownBagService.DeleteBrownBagSession(requestId);
+            var response = await _brownBagService.DeleteBrownBagSessionAsync(requestId);
             return response;
         }
 
         [HttpGet("Requests/{requestId}")]
-        public ResponseDTO Get(int requestId)
+        public async Task<ResponseDTO> Get(int requestId)
         {
-            var response = _brownBagService.GetBrownBagSession(requestId);
+            var response = await _brownBagService.GetBrownBagSessionAsync(requestId);
             return response;
         }
 
         [HttpPut("update/{requestId}")]
-        public ResponseDTO Update(int requestId, Brownbag brownbag)
+        public async Task<ResponseDTO> Update(int requestId, Brownbag brownbag)
         {
-            var response = _brownBagService.UpdateBrownBagSession(requestId, brownbag);
+            var response = await _brownBagService.UpdateBrownBagSessionAsync(requestId, brownbag);
             return response;
         }
 
         [HttpGet("Requests/Employee/{employeeId}")]
-        public ResponseDTO GetBrownBagSessionsByEmployeeId(int employeeId)
+        public async Task<ResponseDTO> GetBrownBagSessionsByEmployeeId(int employeeId)
         {
-            var response = _brownBagService.GetBrownBagSessionsByEmployeeId(employeeId);
+            var response = await _brownBagService.GetBrownBagSessionsByEmployeeIdAsync(employeeId);
             return response;
         }
 

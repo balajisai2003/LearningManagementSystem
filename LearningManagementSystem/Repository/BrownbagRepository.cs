@@ -13,7 +13,7 @@ namespace LearningManagementSystem.Repository
             _dbHelper = dbHelper;
         }
 
-        public async Task<IEnumerable<Brownbag>> GetAllBrownbags()
+        public async Task<IEnumerable<Brownbag>> GetAllBrownbagsAsync()
         {
             using (var db = _dbHelper.GetConnection())
             {
@@ -22,7 +22,7 @@ namespace LearningManagementSystem.Repository
             }
         }
 
-        public async Task<IEnumerable<Brownbag>> GetBrownbagsByEmployeeId(int employeeId)
+        public async Task<IEnumerable<Brownbag>> GetBrownbagsByEmployeeIdAsync(int employeeId)
         {
             using (var db = _dbHelper.GetConnection())
             {
@@ -46,7 +46,7 @@ namespace LearningManagementSystem.Repository
             }
         }
 
-        public async Task<int> CreateBrownbag(Brownbag brownbag)
+        public async Task<int> CreateBrownbagAsync(Brownbag brownbag)
         {
             using (var db = _dbHelper.GetConnection())
             {
@@ -103,19 +103,19 @@ namespace LearningManagementSystem.Repository
             }
         }
 
-        public int UpdateBrownbagStatusById(int id, string status)
+        public async Task<int> UpdateBrownbagStatusByIdAsync(int id, string status)
         {
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = "UPDATE BrownbagRequest SET Status = @Status WHERE RequestID = @RequestID";
-                int response = db.Execute(sql, new { Status = status, RequestID = id });
+                int response = await db.ExecuteAsync(sql, new { Status = status, RequestID = id });
                 return response;
             }
         }
 
-        public bool ApproveBrownbagById(int id)
+        public async Task<bool> ApproveBrownbagByIdAsync(int id)
         {
-            var response = UpdateBrownbagStatusById(id, "Approved");
+            var response = await UpdateBrownbagStatusByIdAsync(id, "Approved");
             if (response > 0)
             {
                 return true;
@@ -123,9 +123,9 @@ namespace LearningManagementSystem.Repository
             return false;
         }
 
-        public bool RejectBrownbagById(int id)
+        public async Task<bool> RejectBrownbagByIdAsync(int id)
         {
-            var response = UpdateBrownbagStatusById(id, "Rejected");
+            var response = await UpdateBrownbagStatusByIdAsync(id, "Rejected");
             if (response > 0)
             {
                 return true;
@@ -133,22 +133,22 @@ namespace LearningManagementSystem.Repository
             return false;
         }
 
-        public int DeleteBrownbagById(int id)
+        public async Task<int> DeleteBrownbagByIdAsync(int id)
         {
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = "DELETE FROM BrownbagRequest WHERE RequestID = @RequestID";
-                int response = db.Execute(sql, new { RequestID = id });
+                int response = await db.ExecuteAsync(sql, new { RequestID = id });
                 return response;
             }
         }
 
-        public Brownbag GetBrownbagById(int id)
+        public async Task<Brownbag> GetBrownbagByIdAsync(int id)
         {
             using (var db = _dbHelper.GetConnection())
             {
                 var sql = "SELECT * FROM BrownbagRequest WHERE RequestID = @RequestID";
-                var response = db.QueryFirstOrDefault<Brownbag>(sql, new { RequestID = id });
+                var response = await db.QueryFirstOrDefaultAsync<Brownbag>(sql, new { RequestID = id });
                 return response;
             }
         }

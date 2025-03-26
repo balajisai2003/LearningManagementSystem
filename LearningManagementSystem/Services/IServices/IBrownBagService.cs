@@ -1,16 +1,17 @@
-﻿using LearningManagementSystem.Models;
+﻿using Azure;
+using LearningManagementSystem.Models;
 using LearningManagementSystem.Models.DTOs;
 
 namespace LearningManagementSystem.Services.IServices
 {
     public interface IBrownBagService
     {
-        public ResponseDTO CreateBrownBagSession(Brownbag brownbag);
-        public ResponseDTO UpdateBrownBagSession(int requestId, Brownbag brownbag);
-        public ResponseDTO DeleteBrownBagSession(int requestId);
-        public ResponseDTO GetBrownBagSession(int requestId);
-        public ResponseDTO GetAllBrownBagSessions();
-        public ResponseDTO GetBrownBagSessionsByEmployeeId(int employeeId);
+         Task<ResponseDTO> CreateBrownBagSessionAsync(Brownbag brownbag);
+         Task<ResponseDTO> UpdateBrownBagSessionAsync(int requestId, Brownbag brownbag);
+         Task<ResponseDTO> DeleteBrownBagSessionAsync(int requestId);
+         Task<ResponseDTO> GetBrownBagSessionAsync(int requestId);
+         Task<ResponseDTO> GetAllBrownBagSessionsAsync();
+         Task<ResponseDTO> GetBrownBagSessionsByEmployeeIdAsync(int employeeId);
 
 
     }
