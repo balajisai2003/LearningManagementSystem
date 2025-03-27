@@ -40,6 +40,7 @@ namespace LearningManagementSystem.Controllers
         [HttpPost("create")]
         public async Task<ResponseDTO> CreateRequestFormAsync( CourseRequestForm form)
         {
+            form.EmployeeID = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             var response = await _requestService.CreateRequestFormAsync(form);
             return response;
@@ -48,6 +49,8 @@ namespace LearningManagementSystem.Controllers
         [HttpPut("update")]
         public async Task<ResponseDTO> UpdateRequestFormAsync(int requestId,CourseRequestForm form)
         {
+            form.EmployeeID = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
             if (!await IsAuthorizedForRequeste(requestId))
             {
                 return UnauthorizedResponse();

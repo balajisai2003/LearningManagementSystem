@@ -154,5 +154,15 @@ namespace LearningManagementSystem.Repository
                 return response;
             }
         }
+
+        public async Task<int> GetEmployeeIdByBrownbagIdAsync(int id)
+        {
+            using (var db = _dbHelper.GetConnection())
+            {
+                var sql = "SELECT EmployeeId FROM BrownbagRequest WHERE RequestID = @RequestID";
+                var response = await db.ExecuteScalarAsync<int>(sql, new { RequestID = id });
+                return response;
+            }
+        }
     }
 }

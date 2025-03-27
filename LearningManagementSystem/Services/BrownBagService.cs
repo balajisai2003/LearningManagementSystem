@@ -177,5 +177,11 @@ namespace LearningManagementSystem.Services
             }
             return _responseDTO;
         }
+
+        public async Task<int> GetEmployeeIdByBrownbagId(int requestId)
+        {
+            var EmployeeID = await repository.GetEmployeeIdByBrownbagIdAsync(requestId);
+            return EmployeeID;
+        }
     }
 }
