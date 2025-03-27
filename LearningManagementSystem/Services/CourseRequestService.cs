@@ -49,7 +49,7 @@ namespace LearningManagementSystem.Services
                     return new ResponseDTO { Success = false, Message = "Request has already been approved!" };
                 }
 
-                if(await _courseProgressRepository.CourseProgressExistsAsync(requestDetails.CourseID, requestDetails.EmployeeID))
+                if (await _courseProgressRepository.CourseProgressExistsAsync(requestDetails.CourseID, requestDetails.EmployeeID))
                 {
                     return new ResponseDTO { Success = false, Message = "Course already exists in progress!" };
                 }
@@ -78,6 +78,11 @@ namespace LearningManagementSystem.Services
         {
             try
             {
+                if(await _courseProgressRepository.IsDuplicateCourseProgressExist(form.EmployeeID, form.CourseID))
+                {
+
+                }
+
                 var requestId = await _courseRequestRepository.CreateRequestFormAsync(form);
                 bool created = requestId!=-1 ? true : false;
                 if (created)

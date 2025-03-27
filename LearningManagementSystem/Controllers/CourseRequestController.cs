@@ -60,7 +60,7 @@ namespace LearningManagementSystem.Controllers
                 return new ResponseDTO
                 {
                     Success = false,
-                    Message = "Request already approves",
+                    Message = "Request already approved",
                     Data = null
                 };
             }
@@ -80,7 +80,7 @@ namespace LearningManagementSystem.Controllers
                 return new ResponseDTO
                 {
                     Success = false,
-                    Message = "Request already approves",
+                    Message = "Request already approved",
                     Data = null
                 };
             }
@@ -97,7 +97,7 @@ namespace LearningManagementSystem.Controllers
                 return new ResponseDTO
                 {
                     Success = false,
-                    Message = "Request already approves",
+                    Message = "Request already approved",
                     Data = null
                 };
             }
