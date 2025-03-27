@@ -49,6 +49,11 @@ namespace LearningManagementSystem.Services
                     return new ResponseDTO { Success = false, Message = "Request has already been approved!" };
                 }
 
+                if(await _courseProgressRepository.CourseProgressExistsAsync(requestDetails.CourseID, requestDetails.EmployeeID))
+                {
+                    return new ResponseDTO { Success = false, Message = "Course already exists in progress!" };
+                }
+
                 var requestEmpIds = !string.IsNullOrEmpty(requestDetails.RequestEmpIDs)
                     ? requestDetails.RequestEmpIDs.Split(',').Select(int.Parse).ToList()
                     : new List<int>();

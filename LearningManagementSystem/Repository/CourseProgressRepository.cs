@@ -2,6 +2,7 @@
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Models.DTOs;
+using LearningManagementSystem.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,6 +14,7 @@ public class CourseProgressRepository
 {
     private readonly DatabaseHelper _dbHelper;
     private readonly EmployeeRepository employeeRepository;
+    private readonly CourseRepository courseRepository;
 
     public CourseProgressRepository(DatabaseHelper dbHelper)
     {
@@ -190,6 +192,26 @@ public class CourseProgressRepository
         const string query = "DELETE FROM CourseProgress WHERE ProgressID = @ProgressID";
         using var connection = _dbHelper.GetConnection();
         return await connection.ExecuteAsync(query, new { ProgressID = progressId }) > 0;
+    }
+
+
+    public async Task<bool> AddMandatoryCoursesToAnEmployee(int EmployeeID)
+    {
+        var resutl = false;
+
+        List<int> MCourseIds = await courseRepository.GetAllMandatoryCourseIDs();
+
+        foreach (int id in MCourseIds)
+        {
+            resutl |= await AddCourseProgressAsync(id, EmployeeID, "Reused", 2042);
+
+            if (resutl == false)
+            {
+                return false;
+            }
+        }
+        return resutl;
+        
     }
 }
 

@@ -100,6 +100,16 @@ namespace LearningManagementSystem.Repository
             }
         }
 
+        public async Task<List<int>> GetAllMandatoryCourseIDs()
+        {
+            using (var dbconn = _databasehelper.GetConnection())
+            {
+                string query = "select CourseID from Courses where Category = 'Mandatory trainings'";
+                var response = await dbconn.QueryAsync<int>(query);
+                return response.ToList();
+            }
+        }
+
 
     }
 }
