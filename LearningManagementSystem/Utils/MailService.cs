@@ -92,7 +92,9 @@ namespace LearningManagementSystem.Utils
                                        $"Course ID: {requestForm.CourseID}\n" +
                                        $"Course Title: {course.Title}\n" +
                                        $"Requested Date: {DateOnly.FromDateTime(requestForm.RequestDate)}\n" +
-                                       $"Requested Employee IDs: {requestForm.RequestEmpIDs}\n";
+                                       $"Requested Employee IDs: {requestForm.RequestEmpIDs}\n"+
+                                       $"For more details, visit our LMS portal at https://lms-winlearn.vercel.app/";
+                ;
                 var htmlContent = $"<p>A new course request form has been submitted. Here are the details:</p>" +
                                   $"<strong>Request ID:</strong> {requestForm.RequestID}<br>" +
                                   $"<strong>Employee ID:</strong> {requestForm.EmployeeID}<br>" +
@@ -100,7 +102,9 @@ namespace LearningManagementSystem.Utils
                                   $"<strong>Course ID:</strong> {requestForm.CourseID}<br>" +
                                   $"<strong>Course Title:</strong> {course.Title}<br>" +
                                   $"<strong>Requested Date:</strong> {DateOnly.FromDateTime(requestForm.RequestDate)}<br>" +
-                                  $"<strong>Requested Employee IDs:</strong> {requestForm.RequestEmpIDs}</p>";
+                                  $"<strong>Requested Employee IDs:</strong> {requestForm.RequestEmpIDs}</p>"+
+                                  $"<p>For more details, visit our LMS portal at <a href='https://lms-winlearn.vercel.app/'>https://lms-winlearn.vercel.app/</a></p>";
+                ;
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
 
                 var response = await client.SendEmailAsync(msg);
@@ -209,7 +213,9 @@ namespace LearningManagementSystem.Utils
                                        $"Topic Name: {brownbag.TopicName}\n" +
                                        $"Agenda: {brownbag.Agenda}\n" +
                                        $"Speaker Description: {brownbag.SpeakerDescription}\n" +
-                                       $"Requested Date for Session: {DateOnly.FromDateTime(brownbag.RequestDate)}\n";
+                                       $"Requested Date for Session: {DateOnly.FromDateTime(brownbag.RequestDate)}\n"+
+                                       $"For more details, visit our LMS portal at https://lms-winlearn.vercel.app/";
+
                 var htmlContent = $"<p>A new BrownBag session request has been submitted. Here are the details:</p>" +
                                   $"<strong>Employee ID:</strong> {brownbag.EmployeeID}<br>" +
                                   $"<strong>Employee Name:</strong> {brownbag.EmployeeName}<br>" +
@@ -217,7 +223,9 @@ namespace LearningManagementSystem.Utils
                                   $"<strong>Topic Name:</strong> {brownbag.TopicName}<br>" +
                                   $"<strong>Agenda:</strong> {brownbag.Agenda}<br>" +
                                   $"<strong>Speaker Description:</strong> {brownbag.SpeakerDescription}<br>" +
-                                  $"<strong>Requested Date for Session:</strong> {DateOnly.FromDateTime(brownbag.RequestDate)}<br>";
+                                  $"<strong>Requested Date for Session:</strong> {DateOnly.FromDateTime(brownbag.RequestDate)}<br>" +
+                                  $"<p>For more details, visit our LMS portal at <a href='https://lms-winlearn.vercel.app/'>https://lms-winlearn.vercel.app/</a></p>";
+                                    
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
 
                 var response = await client.SendEmailAsync(msg);
