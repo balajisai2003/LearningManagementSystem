@@ -191,6 +191,16 @@ public class CourseProgressRepository
         using var connection = _dbHelper.GetConnection();
         return await connection.ExecuteAsync(query, new { ProgressID = progressId }) > 0;
     }
+
+    public async Task<bool> IsDuplicateCourseProgressExist(int EmployeeID, int courseID)
+    {
+        const string query = "SELECT COUNT(*) FROM CourseProgress WHERE EmployeeID = @EmployeeID AND CourseID = @CourseID";
+        using var connection = _dbHelper.GetConnection();
+        int count = await connection.ExecuteScalarAsync<int>(query, new { EmployeeID, CourseID = courseID });
+        return count > 0;
+    }
+
+
 }
 
 public class AddMultipleCourseProgressResult

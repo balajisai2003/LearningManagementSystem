@@ -73,6 +73,16 @@ namespace LearningManagementSystem.Services
         {
             try
             {
+
+                if(await _courseRequestRepository.CheckDuplicateRequestExists(form.EmployeeID, form.CourseID))
+                {
+                    return new ResponseDTO()
+                    {
+                        Success = false,
+                        Message = "You have already requested for this course",
+                        Data = null,
+                    };
+                }
                 var requestId = await _courseRequestRepository.CreateRequestFormAsync(form);
                 bool created = requestId!=-1 ? true : false;
                 if (created)

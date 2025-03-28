@@ -233,6 +233,16 @@ namespace LearningManagementSystem.Repository
         {
             return await UpdateRequestStatusAsync(requestId, "Rejected");
         }
+
+        public async Task<bool> CheckDuplicateRequestExists(int employeeID, int courseID)
+        {
+            using (var db = _dbHelper.GetConnection())
+            {
+                var sql = "SELECT COUNT(1) FROM CourseRequestForm WHERE EmployeeID = @EmployeeID AND CourseID = @CourseID";
+                int count = await db.ExecuteScalarAsync<int>(sql, new { EmployeeID = employeeID, CourseID = courseID });
+                return count > 0;
+            }
+        }
     }
 
     public class BulkResponseHelper

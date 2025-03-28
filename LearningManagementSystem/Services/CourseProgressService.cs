@@ -22,6 +22,15 @@ namespace LearningManagementSystem.Services
         {
             try
             {
+                if (await _repository.IsDuplicateCourseProgressExist(courseProgress.EmployeeID, courseProgress.CourseID)) 
+                {
+                    return new ResponseDTO()
+                    {
+                        Success = false,
+                        Message = "Course Progress Already Exists",
+                        Data = null,
+                    };
+                }
                 bool isAdded = await _repository.AddCourseProgressAsync(courseProgress.CourseID, courseProgress.EmployeeID, courseProgress.NewOrReUsed, courseProgress.RequestorEmployeeId);
                 return GenerateResponse(isAdded, "Course progress added successfully.", "Failed to add course progress.");
             }
