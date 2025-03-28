@@ -31,7 +31,7 @@ public class EmployeeRepository
 
     public async Task<bool> AddEmployeeAsync(Employee employee)
     {
-        const string query = "INSERT INTO Employees (EmployeeID, Name, Designation,TechGroup,Role, Email, Password) VALUES (@EmployeeID, @Name, @Designation, @TechGroup, @Role, @Email,@Password)";
+        const string query = "INSERT INTO Employees (EmployeeID, Name, Designation,TechGroup,Role, Email, Password, Location, Cadre) VALUES (@EmployeeID, @Name, @Designation, @TechGroup, @Role, @Email,@Password, @Location, @Cadre)";
         using var connection = _dbHelper.GetConnection();
         return await connection.ExecuteAsync(query, new
         {
@@ -41,7 +41,9 @@ public class EmployeeRepository
             TechGroup = employee.TechGroup,
             Role = employee.Role,
             Email = employee.Email,
-            Password = employee.Password
+            Password = employee.Password,
+            Location = employee.Location,
+            Cadre = employee.Cadre
         }) > 0;
     }
 
@@ -54,7 +56,7 @@ public class EmployeeRepository
 
     public async Task<bool> UpdateEmployeeAsync(Employee employee)
     {
-        const string query = "UPDATE Employees SET Name = @Name, Designation = @Designation, TechGroup = @TechGroup, Role = @Role, Email = @Email, Password = @Password WHERE EmployeeID = @EmployeeID";
+        const string query = "UPDATE Employees SET Name = @Name, Designation = @Designation, TechGroup = @TechGroup, Role = @Role, Email = @Email, Password = @Password, Location = @Location, Cadre = @Cadre WHERE EmployeeID = @EmployeeID";
         //using var connection = _dbHelper.GetConnection();
         //var resp =  await connection.ExecuteAsync(query, new
         //{
@@ -74,6 +76,8 @@ public class EmployeeRepository
         parameters.Add("@Role", employee.Role);
         parameters.Add("@Email", employee.Email);
         parameters.Add("@Password", employee.Password);
+        parameters.Add("@Location",employee.Location);
+        parameters.Add("@Cadre",employee.Cadre);
 
         using var connection = _dbHelper.GetConnection();
         var resp = await connection.ExecuteAsync(query, parameters) > 0;
