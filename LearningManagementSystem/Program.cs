@@ -94,4 +94,12 @@ app.UseCors("AllowAll");
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"An error occurred: {ex.Message}");
+    throw;
+}
