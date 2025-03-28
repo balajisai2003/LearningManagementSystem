@@ -44,9 +44,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 
-var keyVaultName = builder.Configuration["KeyVaultName"];
-var keyVaultUri = new Uri($"https://{keyVaultName}.vault.azure.net/");
-builder.Configuration.AddAzureKeyVault(keyVaultUri, new DefaultAzureCredential());
+//var keyVaultName = builder.Configuration["KeyVaultName"];
+//var keyVaultUri = new Uri($"https://{keyVaultName}.vault.azure.net/");
+//builder.Configuration.AddAzureKeyVault(keyVaultUri, new DefaultAzureCredential());
 
 builder.Services.AddSingleton<DatabaseHelper>();
 builder.Services.AddScoped<CourseRequestFormRepository>();
@@ -94,12 +94,6 @@ app.UseCors("AllowAll");
 
 app.MapControllers();
 
-try
-{
-    app.Run();
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"An error occurred: {ex.Message}");
-    throw;
-}
+
+app.Run();
+
