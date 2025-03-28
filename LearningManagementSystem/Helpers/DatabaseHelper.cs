@@ -10,7 +10,7 @@ namespace LearningManagementSystem.Helpers
 
         public DatabaseHelper(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("AzureConnection");
+            _connectionString = configuration["AzureConnectionStringHW"];
         }
 
         public IDbConnection GetConnection() => new SqlConnection(_connectionString);
